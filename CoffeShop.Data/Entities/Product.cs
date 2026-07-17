@@ -17,4 +17,5 @@ public class Product
     
     [Required]
     public decimal Price {get; set;}
+    public List<InventoryItem>? inventoryItems {get; set;}
 }
