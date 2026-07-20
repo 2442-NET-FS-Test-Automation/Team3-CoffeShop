@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var conn_string = "Server=localhost,1433;Database=CoffeshopDB;User Id=sa;Password=LibPass123;TrustServerCertificate=true"; //Change it in each laptop
+var conn_string = "Server=localhost,1435;Database=coffeshopv2;User Id=sa;Password=Deniro_007;TrustServerCertificate=true"; //Change it in each laptop
 
 builder.Services.AddDbContextFactory<CoffeShopDbContext>(o => o.UseSqlServer(conn_string));
 
