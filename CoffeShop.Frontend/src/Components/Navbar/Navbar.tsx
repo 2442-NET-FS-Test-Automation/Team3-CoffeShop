@@ -8,7 +8,7 @@ const Navbar = () => {
             <div className = "nav-logo">CoffeShopRevanture</div>
             <div className = "nav-buttons">
                 <button className="login button">Login</button>
-                <button className="register button">Register</button>
+                <bgutton className="register button">Register</button>
             </div>
         </nav>
     )
