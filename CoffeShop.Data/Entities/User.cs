@@ -16,4 +16,7 @@ public class User
     public string Email {get; set;}
     [Required]
     public string Password {get; set;} 
+    public string Role {get; set;} = default!;
+
+    public Order? Order {get; set;}
 }

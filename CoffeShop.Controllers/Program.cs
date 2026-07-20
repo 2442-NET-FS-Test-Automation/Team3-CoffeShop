@@ -1,4 +1,11 @@
+using CoffeShop.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+var conn_string = "Server=localhost,1433;Database=CoffeshopDB;User Id=sa;Password=LibPass123;TrustServerCertificate=true"; //Change it in each laptop
+
+builder.Services.AddDbContextFactory<CoffeShopDbContext>(o => o.UseSqlServer(conn_string));
 
 // Add services to the container.
 
