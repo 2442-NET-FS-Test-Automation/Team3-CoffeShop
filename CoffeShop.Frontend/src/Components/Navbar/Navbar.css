@@ -1,24 +1,74 @@
 .navbar {
+    position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #333;
-    padding: 1rem 2rem;
-    color: white;
+    gap: 2rem;
+    background-color: #fff8ef;
+    padding: 0.8rem 2rem;
+    color: #2f1b0c;
+    border-bottom: 1px solid #ead8c0;
+    box-shadow: 0 8px 24px rgba(47, 27, 12, 0.08);
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
 }
 
 .nav-logo {
-    font-size: 1.5rem;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.nav-title {
+    font-size: 1.25rem;
     font-weight: bold;
 }
 
-.nav-buttons {
+.nav-menu {
     display: flex;
-    gap: 0.3rem;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-link {
+    border: none;
+    background: transparent;
+    color: #4b2d16;
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 0.7rem 0.9rem;
+    border-radius: 999px;
+    cursor: pointer;
+}
+
+.nav-link:hover {
+    background-color: #f0dfc9;
+}
+
+.nav-actions {
+    display: flex;
+    gap: 0.7rem;
 }
 
 .button {
-    padding: 1rem 0;
-    border-radius: 2px;
+    border: 1px solid #8a5a2f;
+    padding: 0.65rem 1rem;
+    border-radius: 999px;
+    font-weight: 700;
     cursor: pointer;
+}
+
+.login {
+    background-color: transparent;
+    color: #4b2d16;
+}
+
+.register {
+    background-color: #8a5a2f;
+    color: white;
 }

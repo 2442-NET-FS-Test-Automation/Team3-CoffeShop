@@ -1,0 +1,115 @@
+div.login {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: min(920px, calc(100% - 2rem));
+    min-height: 520px;
+    overflow: hidden;
+    color: #2f1b0c;
+    background-color: #fff8ef;
+    border: 1px solid #ead8c0;
+    border-radius: 1rem;
+    box-shadow: 0 18px 45px rgba(47, 27, 12, 0.12);
+}
+
+.log-welcome {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2rem;
+    text-align: center;
+    background-color: #f0dfc9;
+}
+
+.log-welcome h2 {
+    margin: 0;
+    font-size: 2rem;
+    color: #2f1b0c;
+}
+
+.login-logo {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 10px 25px rgba(47, 27, 12, 0.16);
+}
+
+.log-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2.5rem;
+}
+
+.log-form h2 {
+    margin: 0 0 1.5rem;
+    font-size: 1.8rem;
+    color: #2f1b0c;
+}
+
+.log-form form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.log-form label {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #4b2d16;
+}
+
+.log-form input {
+    border: 1px solid #d8bd9c;
+    border-radius: 0.75rem;
+    padding: 0.85rem 1rem;
+    color: #2f1b0c;
+    background-color: white;
+    font: inherit;
+    outline: none;
+}
+
+.log-form input:focus {
+    border-color: #8a5a2f;
+    box-shadow: 0 0 0 3px rgba(138, 90, 47, 0.16);
+}
+
+.log-form button {
+    margin-top: 0.8rem;
+    border: 1px solid #8a5a2f;
+    border-radius: 999px;
+    padding: 0.85rem 1rem;
+    color: white;
+    background-color: #8a5a2f;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.log-form button:hover {
+    background-color: #704724;
+}
+
+@media (max-width: 760px) {
+    div.login {
+        grid-template-columns: 1fr;
+    }
+
+    .log-welcome {
+        padding: 1.5rem;
+    }
+
+    .log-welcome h2 {
+        font-size: 1.5rem;
+    }
+
+    .login-logo {
+        width: 120px;
+        height: 120px;
+    }
+
+    .log-form {
+        padding: 1.5rem;
+    }
+}
