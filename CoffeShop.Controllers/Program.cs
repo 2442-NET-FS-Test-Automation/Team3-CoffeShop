@@ -11,7 +11,7 @@ using CoffeShop.Controllers.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 //Db connection
-var conn_string = "Server=localhost,1435;Database=coffeshopv2;User Id=sa;Password=Deniro_007;TrustServerCertificate=true"; //Change it in each laptop
+var conn_string = "Server=localhost,1433;Database=coffeshopv2;User Id=sa;Password=LibPass123;TrustServerCertificate=true"; //Change it in each laptop
 
 //Logger config
 Log.Logger = new LoggerConfiguration()
@@ -25,7 +25,7 @@ builder.Host.UseSerilog();
 const string SpaCorsPolicy = "spa";
 
 //Cors Policy
-builder.Services.AddCors(o => o.AddPolicy(SpaCorsPolicy, p => p 
+builder.Services.AddCors(o => o.AddPolicy(SpaCorsPolicy, p => p
     .WithOrigins("http://localhost:5500")
     .AllowAnyHeader()
     .AllowAnyMethod()
@@ -41,10 +41,13 @@ const string jwtAudience = "coffe-role";
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(o => o.TokenValidationParameters = new TokenValidationParameters
     {
-       ValidateIssuer = true, ValidIssuer = jwtIssuer,
-       ValidateAudience = true, ValidAudience = jwtAudience,
-       ValidateIssuerSigningKey = true, IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
-       ValidateLifetime = true 
+        ValidateIssuer = true,
+        ValidIssuer = jwtIssuer,
+        ValidateAudience = true,
+        ValidAudience = jwtAudience,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey!)),
+        ValidateLifetime = true
     });
 
 builder.Services.AddAuthorization();
