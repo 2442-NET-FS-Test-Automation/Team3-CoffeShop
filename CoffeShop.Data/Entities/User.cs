@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using CoffeShop.Data.Enums;
 
 namespace CoffeShop.Data.Entities;
 
@@ -15,8 +16,8 @@ public class User
     [Required, MaxLength(100)]
     public string Email {get; set;}
     [Required]
-    public string Password {get; set;} 
-    public string Role {get; set;} = default!;
+    public string PasswordHash {get; set;} = ""; //Do NOT Store the password in plain text 
+    public RoleUsers Role {get; set;} = default!;
 
     public Order? Order {get; set;}
 }
