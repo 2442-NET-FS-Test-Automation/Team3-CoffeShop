@@ -55,6 +55,9 @@ builder.Services.AddSingleton<ITokenService, TokenService>();
 
 builder.Services.AddDbContextFactory<CoffeShopDbContext>(o => o.UseSqlServer(conn_string));
 
+builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
+builder.Services.AddScoped<IInventoryService, InventoryService>();
+
 // Add services to the container.
 
 builder.Services.AddControllers();
