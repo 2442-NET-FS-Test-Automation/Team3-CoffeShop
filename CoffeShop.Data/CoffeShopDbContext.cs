@@ -24,23 +24,23 @@ public class CoffeShopDbContext : DbContext
         b.Entity<User>(e =>
         {
 
-            e.HasKey(p => p.Id);
-            e.HasIndex(p => p.Email).IsUnique();
-            e.Property(p => p.Email).HasMaxLength(100);
-            e.HasIndex(p => p.Username).IsUnique();
-            e.Property(p => p.Username).HasMaxLength(100);
-            e.Property(p => p.Password).HasMaxLength(100);
-            e.Property(p => p.Role).HasMaxLength(100);
-
+           e.HasKey(p => p.Id);
+           e.HasIndex(p => p.Email).IsUnique();
+           e.Property(p => p.Email).HasMaxLength(100);
+           e.HasIndex(p => p.Username).IsUnique();
+           e.Property(p => p.Username).HasMaxLength(100);
+           e.Property(p => p.PasswordHash).HasMaxLength(100);
+           e.Property(p => p.Role).HasConversion<string>();
+           
         });
 
         b.Entity<Order>(e =>
         {
 
-            e.HasKey(p => p.Id);
-            e.HasOne(p => p.User)
-                 .WithOne(u => u.Order)
-                 .HasForeignKey<User>(i => i.Id);
+           e.HasKey(p => p.Id);
+           e.HasOne(p => p.User)
+                .WithOne( u => u.Order)
+                .HasForeignKey<Order>(i => i.UserId);
         });
 
         b.Entity<Product>(e =>

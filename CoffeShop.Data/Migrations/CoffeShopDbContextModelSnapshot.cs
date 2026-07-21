@@ -111,6 +111,9 @@ namespace CoffeShop.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
                     b.ToTable("Orders");
                 });
 
@@ -237,7 +240,10 @@ namespace CoffeShop.Data.Migrations
             modelBuilder.Entity("CoffeShop.Data.Entities.User", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CostumerId")
                         .HasColumnType("int");
@@ -252,15 +258,14 @@ namespace CoffeShop.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Role")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -289,6 +294,17 @@ namespace CoffeShop.Data.Migrations
                     b.Navigation("product");
                 });
 
+            modelBuilder.Entity("CoffeShop.Data.Entities.Order", b =>
+                {
+                    b.HasOne("CoffeShop.Data.Entities.User", "User")
+                        .WithOne("Order")
+                        .HasForeignKey("CoffeShop.Data.Entities.Order", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("CoffeShop.Data.Entities.OrderLine", b =>
                 {
                     b.HasOne("CoffeShop.Data.Entities.Order", "Order")
@@ -300,27 +316,19 @@ namespace CoffeShop.Data.Migrations
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("CoffeShop.Data.Entities.User", b =>
-                {
-                    b.HasOne("CoffeShop.Data.Entities.Order", "Order")
-                        .WithOne("User")
-                        .HasForeignKey("CoffeShop.Data.Entities.User", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Order");
-                });
-
             modelBuilder.Entity("CoffeShop.Data.Entities.Order", b =>
                 {
-                    b.Navigation("User");
-
                     b.Navigation("orderLines");
                 });
 
             modelBuilder.Entity("CoffeShop.Data.Entities.Product", b =>
                 {
                     b.Navigation("inventoryItems");
+                });
+
+            modelBuilder.Entity("CoffeShop.Data.Entities.User", b =>
+                {
+                    b.Navigation("Order");
                 });
 #pragma warning restore 612, 618
         }
