@@ -4,9 +4,9 @@ namespace CoffeShop.Data;
 
 public interface IInventoryRepository
 {
-    Task<IReadOnlyList<InventoryItem>> GetAllAsync();
-    Task<InventoryItem?> GetInventoryItemBySkuAsync(string sku);
-    Task<InventoryItem> AddInventoryItemAsync(string sku, string name, decimal price, int quantity);
-    Task<InventoryItem?> ChangeInventoryItemAsync(string sku, string newName, decimal newPrice, int newQuantity);
-    Task<bool> RemoveBySkuAsync(string sku);
+    Task<IReadOnlyList<InventoryItem>> GetAll();
+    Task<InventoryItem?> GetInventoryItemBySku(string sku);
+    Task<InventoryItem> AddInventoryItem(string sku, string name, decimal price, int quantity);
+    Task<InventoryItem?> ChangeInventoryItem(string sku, string newName, decimal newPrice, int newQuantity);
+    Task<bool> RemoveBySku(string sku);
 }

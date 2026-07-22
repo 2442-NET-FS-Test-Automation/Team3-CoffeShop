@@ -5,28 +5,27 @@ namespace CoffeShop.Data;
 
 public class InventoryRepository : IInventoryRepository
 {
-    private readonly IDbContextFactory<CoffeShopDbContext> _factory;
+    private readonly CoffeShopDbContext _context;
 
-    public InventoryRepository(IDbContextFactory<CoffeShopDbContext> factory)
+    public InventoryRepository(CoffeShopDbContext context)
     {
-        _factory = factory;
+        _context = context;
     }
 
-    public async Task<IReadOnlyList<InventoryItem>> GetAllAsync()
+    public async Task<IReadOnlyList<InventoryItem>> GetAll()
     {
-        await using var db = await _factory.CreateDbContextAsync();
-        return await db.InventoryItems.Include(i => i.product).ToListAsync();
+
+        return _context.InventoryItems.Include(i => i.product).ToList();
     }
 
-    public async Task<InventoryItem?> GetInventoryItemBySkuAsync(string sku)
+    public async Task<InventoryItem?> GetInventoryItemBySku(string sku)
     {
-        await using var db = await _factory.CreateDbContextAsync();
-        return await db.InventoryItems.Include(i => i.product).FirstOrDefaultAsync(i => i.product!.Sku == sku);
+
+        return _context.InventoryItems.Include(i => i.product).FirstOrDefault(i => i.product!.Sku == sku);
     }
 
-    public async Task<InventoryItem> AddInventoryItemAsync(string sku, string name, decimal price, int quantity)
+    public async Task<InventoryItem> AddInventoryItem(string sku, string name, decimal price, int quantity)
     {
-        await using var db = await _factory.CreateDbContextAsync();
 
         InventoryItem newItem = new InventoryItem
         {
@@ -34,19 +33,19 @@ public class InventoryRepository : IInventoryRepository
             Stock = quantity
         };
 
-        db.InventoryItems.Add(newItem);
-        await db.SaveChangesAsync();
+        _context.InventoryItems.Add(newItem);
+        _context.SaveChanges();
 
         return newItem;
     }
 
-    public async Task<InventoryItem?> ChangeInventoryItemAsync(string sku, string newName, decimal newPrice, int newQuantity)
+    public async Task<InventoryItem?> ChangeInventoryItem(string sku, string newName, decimal newPrice, int newQuantity)
     {
-        await using var db = await _factory.CreateDbContextAsync();
 
-        InventoryItem? item = await db.InventoryItems
+
+        InventoryItem? item = _context.InventoryItems
             .Include(i => i.product)
-            .FirstOrDefaultAsync(i => i.product!.Sku == sku);
+            .FirstOrDefault(i => i.product!.Sku == sku);
 
         if (item is null)
         {
@@ -57,27 +56,25 @@ public class InventoryRepository : IInventoryRepository
         item.product.Price = newPrice;
         item.Stock = newQuantity;
 
-        await db.SaveChangesAsync();
+        _context.SaveChanges();
 
         return item;
     }
 
-    public async Task<bool> RemoveBySkuAsync(string sku)
+    public async Task<bool> RemoveBySku(string sku)
     {
-        await using var db = await _factory.CreateDbContextAsync();
 
-        // First find the thing we want out of the database - grab it
-        InventoryItem? itemToRemove = await db.InventoryItems.Include(i => i.product)
-                                            .FirstOrDefaultAsync(i => i.product!.Sku == sku);
+        InventoryItem? itemToRemove = _context.InventoryItems.Include(i => i.product)
+                                            .FirstOrDefault(i => i.product!.Sku == sku);
 
         if (itemToRemove is null)
         {
             return false;
         }
 
-        db.Products.Remove(itemToRemove.product!);
+        _context.Products.Remove(itemToRemove.product!);
 
-        await db.SaveChangesAsync();
+        _context.SaveChanges();
         return true;
 
     }

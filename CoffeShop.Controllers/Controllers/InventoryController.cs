@@ -30,7 +30,7 @@ public class InventoryController : ControllerBase
             entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2);
 
             // Actually get the items from DB 
-            var items = await _service.AllAsync();
+            var items = _service.All();
 
             // Return to front end (and also add to cache, since we're wrapped by _cache.GetOrCreateAsync)
             return _mapper.Map<List<InventoryItemDto>>(items);
@@ -42,7 +42,7 @@ public class InventoryController : ControllerBase
     [HttpGet("{sku}")]
     public async Task<ActionResult<InventoryItemDto>> GetBySku(string sku)
     {
-        var item = await _service.BySkuAsync(sku);
+        var item = _service.BySku(sku);
 
         if (item is null)
         {
@@ -59,7 +59,7 @@ public class InventoryController : ControllerBase
     [Authorize(Roles = "Manager")]
     public async Task<ActionResult<InventoryItemDto>> Create(InventoryItemOpsDto newItem)
     {
-        var created = await _service.AddAsync(newItem);
+        var created = _service.Add(newItem);
         var response = _mapper.Map<InventoryItemDto>(created);
 
         _cache.Remove("inventory:all");
@@ -70,7 +70,7 @@ public class InventoryController : ControllerBase
     [Authorize(Roles = "Barista")]
     public async Task<ActionResult> Modify(InventoryItemOpsDto newItem)
     {
-        var modified = await _service.ChangeAsync(newItem);
+        var modified = await _service.Change(newItem);
         var response = _mapper.Map<InventoryItemDto>(modified);
 
         _cache.Remove("inventory:all");
@@ -82,7 +82,7 @@ public class InventoryController : ControllerBase
     [Authorize(Roles = "Manager")]
     public async Task<ActionResult> Delete(string sku)
     {
-        bool isDeleted = await _service.RemoveAsync(sku);
+        bool isDeleted = await _service.Remove(sku);
 
         if (isDeleted)
         {
