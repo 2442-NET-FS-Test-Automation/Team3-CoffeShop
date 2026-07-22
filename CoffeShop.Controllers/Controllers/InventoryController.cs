@@ -56,7 +56,7 @@ public class InventoryController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = "Manager")]
     public async Task<ActionResult<InventoryItemDto>> Create(InventoryItemOpsDto newItem)
     {
         var created = await _service.AddAsync(newItem);
@@ -67,25 +67,19 @@ public class InventoryController : ControllerBase
     }
 
     [HttpPut]
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = "Barista")]
     public async Task<ActionResult> Modify(InventoryItemOpsDto newItem)
     {
         var modified = await _service.ChangeAsync(newItem);
         var response = _mapper.Map<InventoryItemDto>(modified);
 
-        // CreatedAt (201) works a little differently from our other response ActionResults
-        // Created at needs to know how to find the newly created resource - so we tell it
-        // Use the GetBySku controller method (literally the one above) and use the information
-        // in response to build the URI string
-
-        // Invalidating whatever is in cache - because DB state has changed
-        _cache.Remove("inventory:all"); // done
+        _cache.Remove("inventory:all");
 
         return Ok("Object was updated");
     }
 
     [HttpDelete("{sku}")]
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = "Manager")]
     public async Task<ActionResult> Delete(string sku)
     {
         bool isDeleted = await _service.RemoveAsync(sku);
