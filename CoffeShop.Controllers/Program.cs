@@ -16,7 +16,7 @@ using CoffeShop.Data.Entities;
 var builder = WebApplication.CreateBuilder(args);
 
 //Db connection
-var conn_string = "Server=localhost,1433;Database=coffeshopv2;User Id=sa;Password=LibPass123;TrustServerCertificate=true"; //Change it in each laptop
+var conn_string = "Server=localhost,1435;Database=coffeshopv2;User Id=sa;Password=Deniro_007;TrustServerCertificate=true"; //Change it in each laptop
 
 //Logger config
 Log.Logger = new LoggerConfiguration()
