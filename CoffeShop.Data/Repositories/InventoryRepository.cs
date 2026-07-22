@@ -12,19 +12,19 @@ public class InventoryRepository : IInventoryRepository
         _db = db;
     }
 
-    public async Task<IReadOnlyList<InventoryItem>> GetAllAsync()
+    public async Task<IReadOnlyList<InventoryItem>> GetAll()
     {
 
         return await _db.InventoryItems.Include(i => i.product).ToListAsync();
     }
 
-    public async Task<InventoryItem?> GetInventoryItemBySkuAsync(string sku)
+    public async Task<InventoryItem?> GetInventoryItemBySku(string sku)
     {
 
         return await _db.InventoryItems.Include(i => i.product).FirstOrDefaultAsync(i => i.product!.Sku == sku);
     }
 
-    public async Task<InventoryItem> AddInventoryItemAsync(string sku, string name, decimal price, int quantity)
+    public async Task<InventoryItem> AddInventoryItem(string sku, string name, decimal price, int quantity)
     {
 
         InventoryItem newItem = new InventoryItem
@@ -39,7 +39,7 @@ public class InventoryRepository : IInventoryRepository
         return newItem;
     }
 
-    public async Task<InventoryItem?> ChangeInventoryItemAsync(string sku, string newName, decimal newPrice, int newQuantity)
+    public async Task<InventoryItem?> ChangeInventoryItem(string sku, string newName, decimal newPrice, int newQuantity)
     {
 
         InventoryItem? item = await _db.InventoryItems
@@ -60,7 +60,7 @@ public class InventoryRepository : IInventoryRepository
         return item;
     }
 
-    public async Task<bool> RemoveBySkuAsync(string sku)
+    public async Task<bool> RemoveBySku(string sku)
     {
         // First find the thing we want out of the database - grab it
         InventoryItem? itemToRemove = await _db.InventoryItems.Include(i => i.product)

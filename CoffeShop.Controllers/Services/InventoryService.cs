@@ -13,29 +13,29 @@ public class InventoryService : IInventoryService
         _repo = repo;
     }
 
-    public Task<IReadOnlyList<InventoryItem>> AllAsync()
+    public Task<IReadOnlyList<InventoryItem>> All()
     {   // That's the method for now
-        return _repo.GetAllAsync();
+        return _repo.GetAll();
     }
 
-    public Task<InventoryItem?> BySkuAsync(string sku)
+    public Task<InventoryItem?> BySku(string sku)
     {
-        return _repo.GetInventoryItemBySkuAsync(sku);
+        return _repo.GetInventoryItemBySku(sku);
     }
 
-    public Task<InventoryItem> AddAsync(InventoryItemOpsDto dto)
+    public Task<InventoryItem> Add(InventoryItemOpsDto dto)
     {
 
-        return _repo.AddInventoryItemAsync(dto.Sku, dto.Name, dto.Price, dto.Stock);
+        return _repo.AddInventoryItem(dto.Sku, dto.Name, dto.Price, dto.Stock);
     }
 
-    public Task<InventoryItem?> ChangeAsync(InventoryItemOpsDto dto)
+    public Task<InventoryItem?> Change(InventoryItemOpsDto dto)
     {
-        return _repo.ChangeInventoryItemAsync(dto.Sku, dto.Name, dto.Price, dto.Stock);
+        return _repo.ChangeInventoryItem(dto.Sku, dto.Name, dto.Price, dto.Stock);
     }
 
-    public Task<bool> RemoveAsync(string sku)
+    public Task<bool> Remove(string sku)
     {
-        return _repo.RemoveBySkuAsync(sku);
+        return _repo.RemoveBySku(sku);
     }
 }

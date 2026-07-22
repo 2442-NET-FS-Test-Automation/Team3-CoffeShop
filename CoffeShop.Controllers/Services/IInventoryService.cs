@@ -5,9 +5,9 @@ namespace CoffeShop.Controllers.Services;
 
 public interface IInventoryService
 {
-    Task<IReadOnlyList<InventoryItem>> AllAsync();
-    Task<InventoryItem?> BySkuAsync(string sku);
-    public Task<InventoryItem> AddAsync(InventoryItemOpsDto dto);
-    public Task<InventoryItem?> ChangeAsync(InventoryItemOpsDto dto);
-    public Task<bool> RemoveAsync(string sku);
+    Task<IReadOnlyList<InventoryItem>> All();
+    Task<InventoryItem?> BySku(string sku);
+    public Task<InventoryItem> Add(InventoryItemOpsDto dto);
+    public Task<InventoryItem?> Change(InventoryItemOpsDto dto);
+    public Task<bool> Remove(string sku);
 }
