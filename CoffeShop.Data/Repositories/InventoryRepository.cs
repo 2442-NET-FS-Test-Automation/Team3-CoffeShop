@@ -5,23 +5,23 @@ namespace CoffeShop.Data;
 
 public class InventoryRepository : IInventoryRepository
 {
-    private readonly CoffeShopDbContext _context;
+    private readonly CoffeShopDbContext _db;
 
-    public InventoryRepository(CoffeShopDbContext context)
+    public InventoryRepository(CoffeShopDbContext db)
     {
-        _context = context;
+        _db = db;
     }
 
     public async Task<IReadOnlyList<InventoryItem>> GetAll()
     {
 
-        return _context.InventoryItems.Include(i => i.product).ToList();
+        return await _db.InventoryItems.Include(i => i.product).ToListAsync();
     }
 
     public async Task<InventoryItem?> GetInventoryItemBySku(string sku)
     {
 
-        return _context.InventoryItems.Include(i => i.product).FirstOrDefault(i => i.product!.Sku == sku);
+        return await _db.InventoryItems.Include(i => i.product).FirstOrDefaultAsync(i => i.product!.Sku == sku);
     }
 
     public async Task<InventoryItem> AddInventoryItem(string sku, string name, decimal price, int quantity)
@@ -33,8 +33,8 @@ public class InventoryRepository : IInventoryRepository
             Stock = quantity
         };
 
-        _context.InventoryItems.Add(newItem);
-        _context.SaveChanges();
+        _db.InventoryItems.Add(newItem);
+        await _db.SaveChangesAsync();
 
         return newItem;
     }
@@ -42,10 +42,9 @@ public class InventoryRepository : IInventoryRepository
     public async Task<InventoryItem?> ChangeInventoryItem(string sku, string newName, decimal newPrice, int newQuantity)
     {
 
-
-        InventoryItem? item = _context.InventoryItems
+        InventoryItem? item = await _db.InventoryItems
             .Include(i => i.product)
-            .FirstOrDefault(i => i.product!.Sku == sku);
+            .FirstOrDefaultAsync(i => i.product!.Sku == sku);
 
         if (item is null)
         {
@@ -56,25 +55,25 @@ public class InventoryRepository : IInventoryRepository
         item.product.Price = newPrice;
         item.Stock = newQuantity;
 
-        _context.SaveChanges();
+        await _db.SaveChangesAsync();
 
         return item;
     }
 
     public async Task<bool> RemoveBySku(string sku)
     {
-
-        InventoryItem? itemToRemove = _context.InventoryItems.Include(i => i.product)
-                                            .FirstOrDefault(i => i.product!.Sku == sku);
+        // First find the thing we want out of the database - grab it
+        InventoryItem? itemToRemove = await _db.InventoryItems.Include(i => i.product)
+                                            .FirstOrDefaultAsync(i => i.product!.Sku == sku);
 
         if (itemToRemove is null)
         {
             return false;
         }
 
-        _context.Products.Remove(itemToRemove.product!);
+        _db.Products.Remove(itemToRemove.product!);
 
-        _context.SaveChanges();
+        await _db.SaveChangesAsync();
         return true;
 
     }
