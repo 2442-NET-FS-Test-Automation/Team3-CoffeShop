@@ -3,15 +3,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-
 using Serilog;
 using System.Text;
 using CoffeShop.Controllers.Services;
-using Microsoft.Extensions.DependencyModel;
-using System.IO.Compression;
 using CoffeShop.Data.Enums;
-using Microsoft.AspNetCore.Http.Connections;
 using CoffeShop.Data.Entities;
+using CoffeShop.Controllers.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,6 +62,8 @@ builder.Services.AddDbContext<CoffeShopDbContext>(o => o.UseSqlServer(conn_strin
 builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
 
+builder.Services.AddAutoMapper(cfg => cfg.AddMaps(typeof(MappingProfile).Assembly));
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -81,18 +80,18 @@ var app = builder.Build();
 //Seeding Admins to test my endpoint!!
 using (var scope = app.Services.CreateScope())
 {
-    
+
     var db = scope.ServiceProvider.GetRequiredService<CoffeShopDbContext>();
 
-    if(!db.Users.Any(u => u.Role == RoleUsers.Manager))
+    if (!db.Users.Any(u => u.Role == RoleUsers.Manager))
     {
-        
+
         var hasher = new PasswordHasher<User>();
-        var admin = new User {Name = "Diego", Username = "Admin", Role = RoleUsers.Manager, Email = "Example@gmail.com"};
+        var admin = new User { Name = "Diego", Username = "Admin", Role = RoleUsers.Manager, Email = "Example@gmail.com" };
 
         var adminPassword = builder.Configuration["AdminConfig:DefaultPassword"];
 
-        admin.PasswordHash = hasher.HashPassword(admin, adminPassword);
+        admin.PasswordHash = hasher.HashPassword(admin, adminPassword!);
 
         db.Users.Add(admin);
         db.SaveChanges();
