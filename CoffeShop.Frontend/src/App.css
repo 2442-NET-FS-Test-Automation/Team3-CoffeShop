@@ -1,5 +1,9 @@
-.app {
+.App {
   min-height: 100vh;
-  display: grid;
-  place-items: center;
+  background-color: #fbf3e8;
+}
+
+.app {
+  min-height: calc(100vh - 76px);
+  width: 100%;
 }
