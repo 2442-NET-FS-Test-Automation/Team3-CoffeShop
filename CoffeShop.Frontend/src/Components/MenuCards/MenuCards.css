@@ -1,0 +1,78 @@
+.Menu {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 1rem;
+    width: min(1100px, calc(100% - 2rem));
+    margin: 2rem auto;
+    align-items: stretch;
+}
+
+.profile-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    min-width: 0;
+    overflow: hidden;
+    padding: 1rem;
+    color: #2f1b0c;
+    background-color: #fff8ef;
+    border: 1px solid #ead8c0;
+    border-radius: 8px;
+    box-shadow: 0 12px 28px rgba(47, 27, 12, 0.1);
+}
+
+.menu-card-image {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 8px;
+    background-color: #f0dfc9;
+}
+
+.profile-card h2 {
+    margin: 0;
+    color: #2f1b0c;
+    font-size: 1rem;
+    line-height: 1.25;
+}
+
+.profile-card h2:first-of-type {
+    margin-top: 0.2rem;
+    font-size: 1.15rem;
+}
+
+.profile-card button {
+    margin-top: auto;
+    border: 1px solid #8a5a2f;
+    border-radius: 999px;
+    padding: 0.75rem 1rem;
+    color: white;
+    background-color: #8a5a2f;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.profile-card button:hover:not(:disabled) {
+    background-color: #704724;
+}
+
+.profile-card button:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(138, 90, 47, 0.18);
+}
+
+.profile-card button:disabled {
+    border-color: #d8bd9c;
+    color: #7a6552;
+    background-color: #ead8c0;
+    cursor: not-allowed;
+}
+
+@media (max-width: 560px) {
+    .Menu {
+        grid-template-columns: 1fr;
+        width: min(100% - 1rem, 420px);
+        margin: 1rem auto;
+    }
+}
