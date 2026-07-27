@@ -6,6 +6,10 @@ export type CoffeeItem = {
     image?: string
 }
 
+export type CartItem = CoffeeItem & {
+    quantity: number
+}
+
 export type MenuCardProps = {
     coffee: CoffeeItem
     onAddToCart: (coffee: CoffeeItem) => void
