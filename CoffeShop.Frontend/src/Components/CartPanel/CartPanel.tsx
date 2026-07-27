@@ -8,7 +8,10 @@ type CartPanelProps = {
     onAddItem: (coffee: CoffeeItem) => void
     onDecreaseItem: (productId: number) => void
     onRemoveItem: (productId: number) => void
-    onCreateOrder: () => void
+    onCreateOrder: () => void | Promise<void>
+    isCreatingOrder: boolean
+    orderMessage: string
+    orderError: string
 }
 
 function CartPanel({
@@ -19,6 +22,9 @@ function CartPanel({
     onDecreaseItem,
     onRemoveItem,
     onCreateOrder,
+    isCreatingOrder,
+    orderMessage,
+    orderError,
 }: CartPanelProps) {
     return (
         <aside className="cart-panel" aria-label="Current cart">
@@ -80,10 +86,12 @@ function CartPanel({
                     className="cart-checkout"
                     type="button"
                     onClick={onCreateOrder}
-                    disabled={cart.length === 0}
+                    disabled={cart.length === 0 || isCreatingOrder}
                 >
-                    Create order
+                    {isCreatingOrder ? 'Creating order...' : 'Create order'}
                 </button>
+                {orderMessage && <p className="cart-status cart-status-success">{orderMessage}</p>}
+                {orderError && <p className="cart-status cart-status-error">{orderError}</p>}
             </div>
         </aside>
     )

@@ -212,6 +212,21 @@
     cursor: not-allowed;
 }
 
+.cart-status {
+    margin: 0.75rem 0 0;
+    font-size: 0.9rem;
+    font-weight: 800;
+    line-height: 1.35;
+}
+
+.cart-status-success {
+    color: #2f6845;
+}
+
+.cart-status-error {
+    color: #8a3b2f;
+}
+
 @media (max-width: 680px) {
     .cart-panel {
         position: static;
