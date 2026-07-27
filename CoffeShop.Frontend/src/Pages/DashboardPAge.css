@@ -2,70 +2,177 @@
     padding: 2rem;
     max-width: 1200px;
     margin: 0 auto;
+    font-family: inherit;
 }
 
-.dashboard-header {
+/* Encabezado */
+.dash-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 2rem;
-    color: #2f1b0c;
 }
 
-.dashboard-header h1 {
+.dash-title h1 {
     font-size: 2rem;
+    margin: 0 0 0.3rem 0;
+    color: #2f1b0c; /* Tu café oscuro */
+}
+
+.dash-title p {
+    color: #8a5a2f; /* Tu café clarito */
+    margin: 0;
+    font-size: 1rem;
+}
+
+/* Tarjetas KPI (Las 3 de arriba) */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.kpi-card {
+    background-color: white;
+    border: 1px solid #e8d5c4;
+    border-radius: 10px;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(47, 27, 12, 0.05);
+}
+
+.kpi-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.kpi-title {
+    color: #8a5a2f;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    font-weight: bold;
     margin-bottom: 0.5rem;
 }
 
-.dashboard-header p {
-    color: #8a5a2f;
-    font-size: 1.1rem;
+.kpi-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #2f1b0c;
 }
 
-/* Cuadrícula para las tarjetas */
-.stats-grid {
+.kpi-badge {
+    background-color: #e8f5e9; /* Verde clarito para ganancias */
+    color: #2e7d32;
+    padding: 0.3rem 0.6rem;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+/* Layout Principal (Gráfica Izquierda - Top 5 Derecha) */
+.main-content-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: 2fr 1fr; 
     gap: 1.5rem;
-    margin-bottom: 3rem;
 }
 
-/* Estilo de cada tarjeta */
-.stat-card {
+/* Cajas contenedoras */
+.dash-panel {
     background-color: white;
     border: 1px solid #e8d5c4;
     border-radius: 10px;
     padding: 1.5rem;
     box-shadow: 0 4px 6px rgba(47, 27, 12, 0.05);
-    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.panel-header h3 {
+    margin: 0 0 0.3rem 0;
+    font-size: 1.2rem;
+    color: #2f1b0c;
+}
+
+.panel-header p {
+    color: #8a5a2f;
+    margin: 0 0 1.5rem 0;
+    font-size: 0.9rem;
+}
+
+/* Lista Top 5 */
+.top-items-list {
     display: flex;
     flex-direction: column;
+    gap: 1.2rem;
 }
 
-.stat-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 15px rgba(47, 27, 12, 0.1);
-    border-color: #d8bd9c;
+.top-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
-.stat-title {
-    font-size: 0.9rem;
-    color: #8a5a2f;
+.item-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.item-name {
+    display: flex;
+    align-items: center;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 0.5rem;
-}
-
-.stat-value {
-    font-size: 2.5rem;
-    font-weight: 700;
     color: #2f1b0c;
-    margin-bottom: 0.5rem;
 }
 
-.stat-desc {
+.item-rank {
+    background-color: #f4e8dc; /* Fondo cremita */
+    color: #2f1b0c;
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
     font-size: 0.85rem;
-    color: #666;
+    margin-right: 0.8rem;
+    font-weight: bold;
 }
 
-/* Colores condicionales para números */
-.text-danger { color: #d9534f; }
-.text-success { color: #5cb85c; }
+.item-units {
+    font-size: 0.85rem;
+    color: #8a5a2f;
+}
+
+.item-units span {
+    color: #2f1b0c;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+/* Barra de progreso simplificada */
+.progress-bar-bg {
+    background-color: #f4e8dc;
+    height: 6px;
+    border-radius: 3px;
+    width: 100%;
+}
+
+.progress-bar-fill {
+    background-color: #8a5a2f;
+    height: 100%;
+    border-radius: 3px;
+}
+
+/* El cuadro gris temporal donde irá tu gráfica */
+.chart-placeholder {
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed #e8d5c4;
+    border-radius: 10px;
+    color: #8a5a2f;
+    background-color: #faf7f5;
+}

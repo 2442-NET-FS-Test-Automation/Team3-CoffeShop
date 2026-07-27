@@ -7,6 +7,7 @@ import RegisterPage from './Pages/RegisterPage.tsx'
 import { AuthProvider } from './auth/AuthContext.tsx'
 //import OrderPage from './Pages/OrderPage.tsx'
 import InventoryPage from './Pages/InventoryPage.tsx'
+import DashboardPage from './Pages/DashboradPage.tsx'
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
               <Route element={<Navbar/>}>
               <Route path = '/menu' element={<MenuPage/>} />
               <Route path='/inventory' element={<InventoryPage/>} />
+              <Route path='/dashboard' element={<DashboardPage/>} />
               </Route>
       </Routes>
       </AuthProvider>
