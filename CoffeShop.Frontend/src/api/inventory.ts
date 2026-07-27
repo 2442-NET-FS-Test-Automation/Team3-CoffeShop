@@ -38,3 +38,9 @@ export async function createDrink(body:CreateInventoryBody): Promise<InventoryIt
 export async function deleteDrink(sku: string): Promise<void> {
     await api.delete(`/api/inventory/${sku}`);
 }
+
+export async function editDrink(item: {sku: string; name: string; price: number; stock: number }) {
+
+    await api.put(`/api/inventory/edit`, item);
+    
+}

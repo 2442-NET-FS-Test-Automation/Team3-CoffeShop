@@ -66,8 +66,8 @@ public class InventoryController : ControllerBase
         return CreatedAtAction(nameof(GetBySku), new { sku = response.Sku }, response);
     }
 
-    [HttpPut]
-    [Authorize(Roles = "Barista")]
+    [HttpPut ("edit")]
+    [Authorize(Roles = "Manager")]
     public async Task<ActionResult> Modify(InventoryItemOpsDto newItem)
     {
         var modified = await _service.Change(newItem);

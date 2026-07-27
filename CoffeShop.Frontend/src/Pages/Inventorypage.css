@@ -1,14 +1,11 @@
-/* Contenedor principal */
 .inventory-wrapper {
     padding: 2rem;
     color: #2f1b0c;
-    /* Un fondo sutilmente más claro que las tarjetas para que resalten */
     background-color: #faf4eb; 
     min-height: calc(100vh - 100px);
     font-family: inherit;
 }
 
-/* --- TARJETAS DE MÉTRICAS --- */
 .inventory-metrics {
     display: flex;
     gap: 1.5rem;
@@ -56,11 +53,11 @@
     margin: 0;
     font-size: 0.95rem;
     font-weight: 700;
-    color: #4b2d16; /* Mismo color de tus labels del form */
+    color: #4b2d16;
 }
 
 
-/* --- CONTENEDOR DE LA TABLA --- */
+
 .inventory-container {
     background-color: #fff8ef;
     padding: 2rem;
@@ -82,7 +79,7 @@
     color: #2f1b0c;
 }
 
-/* Botón idéntico al de tu Login */
+
 .add-btn {
     border: 1px solid #8a5a2f;
     border-radius: 999px;
@@ -99,11 +96,10 @@
     background-color: #704724;
 }
 
-/* --- ESTILOS DE LA TABLA --- */
 .inventory-table {
     width: 100%;
     border-collapse: collapse;
-    text-align: left;
+    text-align: center;
 }
 
 .inventory-table th {
@@ -112,20 +108,26 @@
     font-size: 0.95rem;
     font-weight: 700;
     padding: 12px 10px;
+    text-align: center;
 }
 
 .inventory-table td {
-    padding: 15px 10px;
     border-bottom: 1px solid #ead8c0;
+    border-right: none;
     color: #2f1b0c;
+    word-wrap: break-word;
+    padding: 15px 10px;
+    text-align: center;
+    vertical-align: middle;
 }
 
 .item-name {
     font-weight: bold;
     color: #2f1b0c;
+    text-align: center;
 }
 
-/* Un estilo de etiqueta que parezca latte */
+
 .category-badge {
     border: 1px solid #d8bd9c;
     background-color: #f0dfc9;
@@ -140,21 +142,21 @@
     background: white;
     border: 1px solid #d8bd9c;
     color: #8a5a2f;
-    width: 32px;
-    height: 32px;
+    padding: 0.5rem 1.1rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.2s;
-    font-size: 1rem;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
+    width: auto;
+    height: auto;
 }
 
 .action-btn:hover {
-    background-color: #f0dfc9;
-    color: #2f1b0c;
+    background-color: #8a5a2f;
+    color: white;
+    border-color: #8a5a2f;
 }
-
 .text-right {
     text-align: right;
 }
@@ -196,5 +198,133 @@
     
     .inventory-wrapper {
         padding: 1rem;
+    }
+}
+
+/*Floating edit window */
+
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(47, 27, 12, 0.35);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: overlayFadeIn 0.2s ease-out;
+}
+
+.modal-overlay.closing {
+    animation: overlayFadeOut 0.2s ease-in forwards;
+}
+
+.modal-content {
+    background-color: #fff8ef;
+    border: 1px solid #ead8c0;
+    border-radius: 1rem;
+    padding: 2rem;
+    width: 90%;
+    max-width: 420px;
+    box-shadow: 0 20px 40px rgba(47, 27, 12, 0.25);
+    animation: modalPopIn 0.2s ease-out;
+}
+
+.modal-content.closing {
+    animation: modalPopOut 0.2s ease-in forwards;
+}
+
+.modal-content h3 {
+    margin: 0 0 1.5rem 0;
+    color: #2f1b0c;
+    font-size: 1.4rem;
+}
+
+.modal-label {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+    margin-bottom: 1.2rem;
+    font-weight: 700;
+    color: #4b2d16;
+    font-size: 0.9rem;
+    width: 100%;
+}
+
+.modal-label input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.7rem;
+    border: 1px solid #ead8c0;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: normal;
+    color: #2f1b0c;
+}
+
+.modal-label input:focus {
+    outline: none;
+    border-color: #8a5a2f;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+.modal-actions button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.6rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    width: auto;
+    height: auto;
+    cursor: pointer;
+}
+
+.modal-actions .action-btn {
+    width: auto;
+    padding: 0.7rem 1.3rem;
+    border-radius: 0.5rem;  
+    font-weight: 700;
+}
+
+.modal-actions .add-btn {
+    border-radius: 0.5rem;
+}
+
+@keyframes overlayFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes overlayFadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes modalPopIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes modalPopOut {
+    from {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.9) translateY(10px);
     }
 }
