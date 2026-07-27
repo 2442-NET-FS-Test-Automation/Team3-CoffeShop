@@ -1,6 +1,6 @@
 import './Navbar.css';
 import logo from '../../assets/CoffeShopLogo.png';
-import { useNavigate, Outlet } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from '../../auth/useAuth';
 
 const Navbar = () => {
@@ -9,7 +9,6 @@ const Navbar = () => {
     const {user, logout} = useAuth();
 
     return (
-        <>
         <nav className="navbar">
             <div className="nav-brand">
                 <img className="nav-logo" src={logo} alt="Company Logo" />
@@ -24,7 +23,7 @@ const Navbar = () => {
 
             <div className="nav-actions">
                 {!user && (
-                    <button className="login button" onClick={() => navigate ('/')}>Login</button>
+                    <button className="login button" onClick={() => navigate ('/login')}>Login</button>
                 )}
 
                 {user?.role === "Manager" && (
@@ -34,7 +33,7 @@ const Navbar = () => {
                 {user && (
                     <button className="login button" onClick={() => {
                         logout();
-                        navigate("/");
+                        navigate("/login");
                     }}>
                         Logout
                     </button>
@@ -42,10 +41,6 @@ const Navbar = () => {
                 
             </div>
         </nav>
-        <main>
-            <Outlet />
-        </main>
-        </>
     );
 };
 

@@ -1,28 +1,49 @@
-import { Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import './App.css'
-import Navbar from './Components/Navbar/Navbar.tsx'
 import MenuPage from './Pages/MenuPage.tsx'
 import LoginPage from './Pages/LoginPage.tsx'
 import RegisterPage from './Pages/RegisterPage.tsx'
-import { AuthProvider } from './auth/AuthContext.tsx'
-//import OrderPage from './Pages/OrderPage.tsx'
 import InventoryPage from './Pages/InventoryPage.tsx'
 import DashboardPage from './Pages/DashboradPage.tsx'
+import RequireAuth from './auth/RequireAuth.tsx'
+import ProtectedLayout from './Components/ProtectedLayout/ProtectedLayout.tsx'
 
 function App() {
-  return (
-    <AuthProvider>
-    <Routes>
-              <Route path='/' element={<LoginPage/>} />
-              <Route path='/register' element={<RegisterPage/>} />
+  return ( 
+     <Routes>
+        <Route path='/' element={<Navigate to="/menu" replace />} />
+        <Route path='/login' element ={<LoginPage/>}/>
+        <Route path='/register' element ={<RegisterPage/>}/>
 
-              <Route element={<Navbar/>}>
-              <Route path = '/menu' element={<MenuPage/>} />
-              <Route path='/inventory' element={<InventoryPage/>} />
-              <Route path='/dashboard' element={<DashboardPage/>} />
-              </Route>
+        <Route element={<ProtectedLayout />}>
+          <Route 
+            path = "/menu"
+            element = {
+              <RequireAuth allowedRoles ={["Manager", "Barista"]}>
+                <MenuPage/>
+              </RequireAuth>
+            } 
+          />
+          <Route 
+            path = "/dashboard"
+            element = {
+              <RequireAuth allowedRoles ={["Manager", "Admin"]}>
+                <DashboardPage/>
+              </RequireAuth>
+            } 
+          />
+          <Route 
+            path = "/inventory"
+            element = {
+              <RequireAuth allowedRoles ={["Manager", "Admin"]}>
+                <InventoryPage/>
+              </RequireAuth>
+            } 
+          />
+        </Route>
+
+        <Route path='*' element={<Navigate to="/menu" replace />} />
       </Routes>
-      </AuthProvider>
   )
 }
 
