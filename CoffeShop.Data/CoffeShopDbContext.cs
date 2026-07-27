@@ -39,8 +39,8 @@ public class CoffeShopDbContext : DbContext
 
            e.HasKey(p => p.Id);
            e.HasOne(p => p.User)
-                .WithOne( u => u.Order)
-                .HasForeignKey<Order>(i => i.UserId);
+                .WithMany( u => u.Orders)
+                .HasForeignKey(i => i.UserId);
         });
 
         b.Entity<Product>(e =>

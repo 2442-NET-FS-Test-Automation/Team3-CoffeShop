@@ -3,7 +3,6 @@ import logo from '../assets/CoffeShopLogo.png';
 import { type SyntheticEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Register } from "../api/auth";
-import { p } from "motion/react-client";
 
 const RegisterPage = () => {
 

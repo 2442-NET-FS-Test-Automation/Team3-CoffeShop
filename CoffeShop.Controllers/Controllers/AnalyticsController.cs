@@ -11,12 +11,12 @@ namespace CoffeShop.Controllers.Controllers;
 [Route("api/[controller]")]
 [Authorize(Roles = "Manager")]
 
-public class AnalythicsController : ControllerBase
+public class AnalyticsController : ControllerBase
 {
 
     private readonly CoffeShopDbContext _db;
     
-    public AnalythicsController (CoffeShopDbContext db)
+    public AnalyticsController (CoffeShopDbContext db)
     {
         _db = db;
     } 

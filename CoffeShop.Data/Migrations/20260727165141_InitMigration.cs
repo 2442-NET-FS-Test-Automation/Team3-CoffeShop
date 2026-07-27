@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -7,7 +8,7 @@
 namespace CoffeShop.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -20,7 +21,7 @@ namespace CoffeShop.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Sku = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false, defaultValue: 0m)
+                    Price = table.Column<decimal>(type: "decimal(10,2)", nullable: false, defaultValue: 0m)
                 },
                 constraints: table =>
                 {
@@ -71,7 +72,8 @@ namespace CoffeShop.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    OrderTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -103,6 +105,12 @@ namespace CoffeShop.Data.Migrations
                         principalTable: "Orders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderLines_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
@@ -121,6 +129,22 @@ namespace CoffeShop.Data.Migrations
                     { 9, "Iced Chai", 95.00m, "COL-CHA-09" }
                 });
 
+            migrationBuilder.InsertData(
+                table: "InventoryItems",
+                columns: new[] { "Id", "ProductId", "Stock" },
+                values: new object[,]
+                {
+                    { 1, 1, 5 },
+                    { 2, 2, 8 },
+                    { 3, 3, 4 },
+                    { 4, 4, 6 },
+                    { 5, 5, 2 },
+                    { 6, 6, 7 },
+                    { 7, 7, 5 },
+                    { 8, 8, 10 },
+                    { 9, 9, 3 }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_InventoryItems_ProductId",
                 table: "InventoryItems",
@@ -132,10 +156,14 @@ namespace CoffeShop.Data.Migrations
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OrderLines_ProductId",
+                table: "OrderLines",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Orders_UserId",
                 table: "Orders",
-                column: "UserId",
-                unique: true);
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_Sku",
@@ -166,10 +194,10 @@ namespace CoffeShop.Data.Migrations
                 name: "OrderLines");
 
             migrationBuilder.DropTable(
-                name: "Products");
+                name: "Orders");
 
             migrationBuilder.DropTable(
-                name: "Orders");
+                name: "Products");
 
             migrationBuilder.DropTable(
                 name: "Users");
