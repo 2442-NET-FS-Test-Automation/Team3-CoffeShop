@@ -19,5 +19,5 @@ public class User
     public string PasswordHash {get; set;} = ""; //Do NOT Store the password in plain text 
     public RoleUsers Role {get; set;} = default!;
 
-    public Order? Order {get; set;}
+    public List<Order> Orders {get; set;} = new();
 }

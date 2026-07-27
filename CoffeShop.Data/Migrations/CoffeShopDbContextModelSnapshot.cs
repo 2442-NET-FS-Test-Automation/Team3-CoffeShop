@@ -111,8 +111,7 @@ namespace CoffeShop.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("Orders");
                 });
@@ -297,8 +296,8 @@ namespace CoffeShop.Data.Migrations
             modelBuilder.Entity("CoffeShop.Data.Entities.Order", b =>
                 {
                     b.HasOne("CoffeShop.Data.Entities.User", "User")
-                        .WithOne("Order")
-                        .HasForeignKey("CoffeShop.Data.Entities.Order", "UserId")
+                        .WithMany("Orders")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -328,7 +327,7 @@ namespace CoffeShop.Data.Migrations
 
             modelBuilder.Entity("CoffeShop.Data.Entities.User", b =>
                 {
-                    b.Navigation("Order");
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

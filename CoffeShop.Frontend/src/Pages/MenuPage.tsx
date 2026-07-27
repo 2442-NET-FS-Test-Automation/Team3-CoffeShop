@@ -12,6 +12,7 @@ import icedAmericanImg from '../assets/Menu_assets/ICED_AMERICAN.png'
 import icedTaroImg from '../assets/Menu_assets/ICED_TARO.png'
 import icedChaiImg from '../assets/Menu_assets/ICED_CHAI.png'
 import './MenuPage.css'
+import { createOrder } from '../api/orders'
 
 type SortOrder = 'none' | 'asc' | 'desc'
 
@@ -31,6 +32,9 @@ function MenuPage() {
     const [cart, setCart] = useState<CartItem[]>([])
     const [searchTerm, setSearchTerm] = useState<string>('')
     const [sortOrder, setSortOrder] = useState<SortOrder>('none')
+    const [isCreatingOrder, setIsCreatingOrder] = useState(false)
+    const [orderMessage, setOrderMessage] = useState('')
+    const [orderError, setOrderError] = useState('')
 
     const handleToggleSort = () => {
         setSortOrder((currentSortOrder) => {
@@ -47,6 +51,8 @@ function MenuPage() {
 
 
     const handleAddToCart = (coffee: CoffeeItem) => {
+        setOrderMessage('')
+        setOrderError('')
         setCart((currentCart) => {
             const currentItem = currentCart.find((item) => item.productId === coffee.productId)
 
@@ -68,6 +74,8 @@ function MenuPage() {
 
     // CartPanel calls this when the cashier presses the minus button.
     const handleDecreaseCartItem = (productId: number) => {
+        setOrderMessage('')
+        setOrderError('')
         setCart((currentCart) =>
             currentCart
                 .map((item) =>
@@ -81,20 +89,40 @@ function MenuPage() {
 
     // CartPanel calls this when the cashier removes a full line from the ticket.
     const handleRemoveCartItem = (productId: number) => {
+        setOrderMessage('')
+        setOrderError('')
         setCart((currentCart) => currentCart.filter((item) => item.productId !== productId))
     }
 
-    const handleCreateOrder = () => {
-        if (cart.length === 0){
-            return;
-        } 
+    const handleCreateOrder = async () => {
+        if (cart.length === 0) {
+            setOrderError('Add at least one item before creating an order')
+            return
+        }
+
+        setIsCreatingOrder(true)
+        setOrderMessage('')
+        setOrderError('')
+
         const orderLines = cart.map((item) => ({
-        productId: item.productId,
-        quantity: item.quantity,
+            productId: item.productId,
+            quantity: item.quantity,
         }))
 
         const createOrderDto = {
             lines: orderLines,
+        }
+
+        try {
+            const createdOrder = await createOrder(createOrderDto)
+            setCart([])
+            setOrderMessage(
+                `Order #${createdOrder.orderId} created. Total: $${createdOrder.total.toFixed(2)}`
+            )
+        } catch {
+            setOrderError('Could not create the order. Check stock and try again.')
+        } finally {
+            setIsCreatingOrder(false)
         }
     }
 
@@ -175,6 +203,9 @@ function MenuPage() {
                     onDecreaseItem={handleDecreaseCartItem}
                     onRemoveItem={handleRemoveCartItem}
                     onCreateOrder={handleCreateOrder}
+                    isCreatingOrder={isCreatingOrder}
+                    orderMessage={orderMessage}
+                    orderError={orderError}
                 />
             </div>
         </section>
