@@ -1,0 +1,71 @@
+.dashboard-wrapper {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.dashboard-header {
+    margin-bottom: 2rem;
+    color: #2f1b0c;
+}
+
+.dashboard-header h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-header p {
+    color: #8a5a2f;
+    font-size: 1.1rem;
+}
+
+/* Cuadrícula para las tarjetas */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+/* Estilo de cada tarjeta */
+.stat-card {
+    background-color: white;
+    border: 1px solid #e8d5c4;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(47, 27, 12, 0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(47, 27, 12, 0.1);
+    border-color: #d8bd9c;
+}
+
+.stat-title {
+    font-size: 0.9rem;
+    color: #8a5a2f;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2f1b0c;
+    margin-bottom: 0.5rem;
+}
+
+.stat-desc {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+/* Colores condicionales para números */
+.text-danger { color: #d9534f; }
+.text-success { color: #5cb85c; }

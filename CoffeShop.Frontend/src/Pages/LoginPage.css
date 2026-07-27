@@ -1,3 +1,12 @@
+.login-page-wrapper {
+
+    display: flex;
+    justify-content:  center;
+    align-items: center;
+    min-height: calc(100vh - 100px);
+    padding: 2rem;
+}
+
 div.login {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -9,6 +18,7 @@ div.login {
     border: 1px solid #ead8c0;
     border-radius: 1rem;
     box-shadow: 0 18px 45px rgba(47, 27, 12, 0.12);
+
 }
 
 .log-welcome {
