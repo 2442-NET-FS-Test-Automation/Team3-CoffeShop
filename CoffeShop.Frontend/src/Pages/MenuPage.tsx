@@ -58,7 +58,6 @@ function MenuPage() {
         <section className="menu-page">
             <div className="menu-page-header">
                 <div>
-                    <p className="menu-page-kicker">Barista counter</p>
                     <h1>Menu</h1>
                 </div>
 

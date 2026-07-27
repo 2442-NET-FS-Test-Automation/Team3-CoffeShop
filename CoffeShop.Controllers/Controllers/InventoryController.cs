@@ -30,7 +30,7 @@ public class InventoryController : ControllerBase
             entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2);
 
             // Actually get the items from DB 
-            var items = _service.All();
+            var items = await _service.All();
 
             // Return to front end (and also add to cache, since we're wrapped by _cache.GetOrCreateAsync)
             return _mapper.Map<List<InventoryItemDto>>(items);

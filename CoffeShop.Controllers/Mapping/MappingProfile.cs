@@ -10,7 +10,8 @@ public class MappingProfile : Profile
     {
         CreateMap<InventoryItem, InventoryItemDto>()
             .ForCtorParam("Sku", o => o.MapFrom(s => s.product!.Sku))
-            .ForCtorParam("Name", o => o.MapFrom(s => s.product!.Name));
+            .ForCtorParam("Name", o => o.MapFrom(s => s.product!.Name))
+            .ForCtorParam("Price", o => o.MapFrom(s => s.product.Price));
     }
 
 }

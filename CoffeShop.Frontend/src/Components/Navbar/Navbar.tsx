@@ -1,8 +1,15 @@
 import './Navbar.css';
 import logo from '../../assets/CoffeShopLogo.png';
+import { useNavigate, Outlet } from "react-router-dom";
+import { useAuth } from '../../auth/useAuth';
 
 const Navbar = () => {
+    
+    const navigate = useNavigate();
+    const {user, logout} = useAuth();
+
     return (
+        <>
         <nav className="navbar">
             <div className="nav-brand">
                 <img className="nav-logo" src={logo} alt="Company Logo" />
@@ -10,16 +17,35 @@ const Navbar = () => {
             </div>
 
             <div className="nav-menu">
-                <button className="nav-link">Menu</button>
-                <button className="nav-link">Orders</button>
-                <button className="nav-link">Inventory</button>
+                <button className="nav-link" onClick={() => navigate ('/menu')}>Menu</button>
+                <button className="nav-link" onClick={() => navigate ('/inventory')}>Inventory</button>
+                <button className="nav-link">Dashboard</button>
             </div>
 
             <div className="nav-actions">
-                <button className="login button">Login</button>
-                <button className="register button">Register</button>
+                {!user && (
+                    <button className="login button" onClick={() => navigate ('/')}>Login</button>
+                )}
+
+                {user?.role === "Manager" && (
+                    <button className="register button" onClick={() => navigate ('/register')}>Register</button>
+                )}
+
+                {user && (
+                    <button className="login button" onClick={() => {
+                        logout();
+                        navigate("/");
+                    }}>
+                        Logout
+                    </button>
+                )}
+                
             </div>
         </nav>
+        <main>
+            <Outlet />
+        </main>
+        </>
     );
 };
 
