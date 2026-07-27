@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import "./DashboardPAge.css";
 import { api } from "../api/client";
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { TypeOutline } from "lucide-react";
 
     interface TopItems {
         name: string;
-        unitSold: number;
+        unitsSold: number;
     }
 
     interface HourlySale {
@@ -77,13 +79,12 @@ const DashboardPage = () => {
     }
 
     const maxUnitsSold = stats.topItems.length > 0
-        ? Math.max(...stats.topItems.map(item => item.unitSold)) : 1;
+        ? Math.max(...stats.topItems.map(item => item.unitsSold)) : 1;
 
 
 
 return (
         <div className="dashboard-wrapper">
-            {/* ENCABEZADO */}
             <div className="dash-header-row">
                 <div className="dash-title">
                     <h1>Analytics</h1>
@@ -91,7 +92,6 @@ return (
                 </div>
             </div>
 
-            {/* TARJETAS KPI */}
             <div className="kpi-grid">
                 <div className="kpi-card">
                     <div className="kpi-info">
@@ -115,21 +115,60 @@ return (
                 </div>
             </div>
 
-            {/* CONTENIDO PRINCIPAL */}
             <div className="main-content-grid">
-                
-                {/* Panel Izquierdo: Gráfica */}
-                <div className="dash-panel">
-                    <div className="panel-header">
-                        <h3>Sales by Hour</h3>
-                        <p>Revenue over time · Today</p>
-                    </div>
-                    <div className="chart-placeholder">
-                        <p>Gráfica funcional pendiente de conexión 📈</p>
-                    </div>
-                </div>
+                <div className="dashboard-chart-container">
 
-                {/* Panel Derecho: Top 5 */}
+            <div className="dash-panel">
+            <div className="panel-header">
+                <h3>Sales by Hour</h3>
+                <p>Revenue over time · Today</p>
+            </div>
+
+    <ResponsiveContainer width="100%" height="100%">
+        <AreaChart 
+            data={stats.salesByHour} 
+            margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+        >
+            <defs>
+                <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#8a5a2f" stopOpacity={0.4}/>
+                    <stop offset="95%" stopColor="#8a5a2f" stopOpacity={0}/>
+                </linearGradient>
+            </defs>
+            <XAxis 
+                dataKey="hour" 
+                stroke="#8a5a2f" 
+                fontSize={12} 
+                tickLine={false} 
+                axisLine={false} 
+            />
+            <YAxis 
+                stroke="#8a5a2f" 
+                fontSize={12} 
+                tickLine={false} 
+                axisLine={false} 
+                tickFormatter={(value) => `$${value}`} 
+            />
+            <Tooltip 
+                formatter={(value: any) => {
+
+                    const numericValue = typeof value === 'number' ? value : Number(value) || 0;
+                    return [`$${value.toFixed(2)}`, "Revenue"];
+                }}
+            />
+            <Area 
+                type="monotone" 
+                dataKey="amount" 
+                stroke="#2f1b0c" 
+                strokeWidth={3}
+                fillOpacity={1} 
+                fill="url(#colorAmount)" 
+            />
+        </AreaChart>
+    </ResponsiveContainer>
+</div>
+</div>
+ 
                 <div className="dash-panel">
                     <div className="panel-header">
                         <h3>Top 5 Items</h3>
@@ -145,7 +184,7 @@ return (
                                         {item.name}
                                     </div>
                                     <div className="item-units">
-                                        <span>{item.unitSold}</span> units
+                                        <span>{item.unitsSold}</span> units
                                     </div>
                                 </div>
                                 <div className="progress-bar-bg">

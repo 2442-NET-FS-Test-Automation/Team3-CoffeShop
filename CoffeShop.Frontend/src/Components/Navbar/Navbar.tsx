@@ -19,7 +19,7 @@ const Navbar = () => {
             <div className="nav-menu">
                 <button className="nav-link" onClick={() => navigate ('/menu')}>Menu</button>
                 <button className="nav-link" onClick={() => navigate ('/inventory')}>Inventory</button>
-                <button className="nav-link">Dashboard</button>
+                <button className="nav-link" onClick={() => navigate ('/dashboard')}>Dashboard</button>
             </div>
 
             <div className="nav-actions">
