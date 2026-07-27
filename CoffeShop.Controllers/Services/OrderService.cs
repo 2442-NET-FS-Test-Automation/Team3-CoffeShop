@@ -2,16 +2,19 @@ using CoffeShop.Controllers.DTOs;
 using CoffeShop.Data;
 using CoffeShop.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace CoffeShop.Controllers.Services;
 
 public class OrderService : IOrderService
 {
     private readonly CoffeShopDbContext _db;
+    private readonly IMemoryCache _cache;
 
-    public OrderService(CoffeShopDbContext db)
+    public OrderService(CoffeShopDbContext db, IMemoryCache cache)
     {
         _db = db;
+        _cache = cache;
     }
 
     //   We need this format (CreateOrderDto dto) of lines and the token to process the orders and modify the database
@@ -104,6 +107,8 @@ public class OrderService : IOrderService
         _db.Orders.Add(order);
         await _db.SaveChangesAsync();
         await transaction.CommitAsync();
+
+        _cache.Remove("inventory:all");
 
         var responseLines = order.orderLines!
             .Select(line =>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import "./DashboardPAge.css";
+import "./DashboardPage.css";
 import { api } from "../api/client";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
