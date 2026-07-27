@@ -4,6 +4,7 @@ using CoffeShop.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CoffeShop.Data.Migrations
 {
     [DbContext(typeof(CoffeShopDbContext))]
-    partial class CoffeShopDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260723220921_DateAdded")]
+    partial class DateAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -115,7 +118,8 @@ namespace CoffeShop.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Orders");
                 });
@@ -302,8 +306,8 @@ namespace CoffeShop.Data.Migrations
             modelBuilder.Entity("CoffeShop.Data.Entities.Order", b =>
                 {
                     b.HasOne("CoffeShop.Data.Entities.User", "User")
-                        .WithMany("Orders")
-                        .HasForeignKey("UserId")
+                        .WithOne("Order")
+                        .HasForeignKey("CoffeShop.Data.Entities.Order", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -341,7 +345,7 @@ namespace CoffeShop.Data.Migrations
 
             modelBuilder.Entity("CoffeShop.Data.Entities.User", b =>
                 {
-                    b.Navigation("Orders");
+                    b.Navigation("Order");
                 });
 #pragma warning restore 612, 618
         }

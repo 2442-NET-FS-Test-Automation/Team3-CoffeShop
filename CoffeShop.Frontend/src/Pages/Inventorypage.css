@@ -1,0 +1,200 @@
+/* Contenedor principal */
+.inventory-wrapper {
+    padding: 2rem;
+    color: #2f1b0c;
+    /* Un fondo sutilmente más claro que las tarjetas para que resalten */
+    background-color: #faf4eb; 
+    min-height: calc(100vh - 100px);
+    font-family: inherit;
+}
+
+/* --- TARJETAS DE MÉTRICAS --- */
+.inventory-metrics {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.metric-card {
+    flex: 1;
+    padding: 1.5rem;
+    background-color: #fff8ef; /* Mismo fondo de tu login */
+    border: 1px solid #ead8c0; /* Mismo borde de tu login */
+    border-radius: 1rem;       /* Mismo radio de tu login */
+    box-shadow: 0 10px 25px rgba(47, 27, 12, 0.08); /* Sombra suave café */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.metric-card.metric-alert {
+    border: 2px solid #b53d39; /* Rojo un poco más terroso */
+    background-color: #fdf2f2;
+}
+
+.metric-gold {
+    margin: 0 0 0.5rem 0;
+    color: #8a5a2f; /* El color de tu botón de login */
+    font-size: 2rem;
+}
+
+.metric-green {
+    margin: 0 0 0.5rem 0;
+    color: #3a7842; /* Un verde un poco más natural */
+    font-size: 2rem;
+}
+
+.metric-red {
+    margin: 0 0 0.5rem 0;
+    color: #b53d39; 
+    font-size: 2rem;
+}
+
+.metric-label {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #4b2d16; /* Mismo color de tus labels del form */
+}
+
+
+/* --- CONTENEDOR DE LA TABLA --- */
+.inventory-container {
+    background-color: #fff8ef;
+    padding: 2rem;
+    border: 1px solid #ead8c0;
+    border-radius: 1rem;
+    box-shadow: 0 10px 25px rgba(47, 27, 12, 0.08);
+}
+
+.inventory-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.inventory-header h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: #2f1b0c;
+}
+
+/* Botón idéntico al de tu Login */
+.add-btn {
+    border: 1px solid #8a5a2f;
+    border-radius: 999px;
+    padding: 0.85rem 1.5rem;
+    color: white;
+    background-color: #8a5a2f;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.add-btn:hover {
+    background-color: #704724;
+}
+
+/* --- ESTILOS DE LA TABLA --- */
+.inventory-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.inventory-table th {
+    border-bottom: 2px solid #ead8c0;
+    color: #4b2d16;
+    font-size: 0.95rem;
+    font-weight: 700;
+    padding: 12px 10px;
+}
+
+.inventory-table td {
+    padding: 15px 10px;
+    border-bottom: 1px solid #ead8c0;
+    color: #2f1b0c;
+}
+
+.item-name {
+    font-weight: bold;
+    color: #2f1b0c;
+}
+
+/* Un estilo de etiqueta que parezca latte */
+.category-badge {
+    border: 1px solid #d8bd9c;
+    background-color: #f0dfc9;
+    color: #4b2d16;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.action-btn {
+    background: white;
+    border: 1px solid #d8bd9c;
+    color: #8a5a2f;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 1rem;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.action-btn:hover {
+    background-color: #f0dfc9;
+    color: #2f1b0c;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-green {
+    color: #3a7842;
+    font-weight: bold;
+}
+
+.text-red {
+    color: #b53d39;
+    font-weight: bold;
+}
+
+.error-text {
+    color: #b53d39;
+    font-weight: bold;
+    background-color: #fdf2f2;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #b53d39;
+}
+
+.loading-text, .empty-row {
+    color: #4b2d16;
+    text-align: center;
+    padding: 2rem;
+    font-weight: bold;
+}
+
+@media (max-width: 760px) {
+    .inventory-metrics {
+        flex-direction: column;
+    }
+    
+    .inventory-container {
+        padding: 1.5rem;
+    }
+    
+    .inventory-wrapper {
+        padding: 1rem;
+    }
+}

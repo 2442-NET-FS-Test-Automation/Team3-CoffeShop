@@ -27,7 +27,6 @@ public class TokenService : ITokenService
 
             new[] {new Claim(ClaimTypes.Name, user), new Claim(ClaimTypes.Role, role)},
             expires: DateTime.UtcNow.AddHours(1), signingCredentials: creds
-
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
