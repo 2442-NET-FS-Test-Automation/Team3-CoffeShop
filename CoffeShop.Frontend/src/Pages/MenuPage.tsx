@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import MenuCards from '../Components/MenuCards/MenuCards.tsx'
 import CartPanel from '../Components/CartPanel/CartPanel.tsx'
 import type { CartItem, CoffeeItem } from '../Components/MenuCards/menuTypes'
@@ -13,20 +13,33 @@ import icedTaroImg from '../assets/Menu_assets/ICED_TARO.png'
 import icedChaiImg from '../assets/Menu_assets/ICED_CHAI.png'
 import './MenuPage.css'
 import { createOrder } from '../api/orders'
+import { getInventory } from '../api/inventory'
 
 type SortOrder = 'none' | 'asc' | 'desc'
 
-const coffees: CoffeeItem[] = [
-    { productId: 1, name: 'American', price: 50, stock: 5, image: americanImg },
-    { productId: 2, name: 'Latte', price: 65, stock: 8, image: latteImg },
-    { productId: 3, name: 'Capuccino', price: 60, stock: 4, image: capuccinoImg },
-    { productId: 4, name: 'Taro', price: 80, stock: 6, image: taroImg },
-    { productId: 5, name: 'Natural Chai', price: 90, stock: 2, image: naturalChaiImg },
-    { productId: 6, name: 'Iced Latte', price: 70, stock: 7, image: icedLatteImg },
-    { productId: 7, name: 'Iced American', price: 60, stock: 5, image: icedAmericanImg },
-    { productId: 8, name: 'Iced Taro', price: 85, stock: 10, image: icedTaroImg },
-    { productId: 9, name: 'Iced Chai', price: 95, stock: 3, image: icedChaiImg },
-]
+const productIdBySku: Record<string, number> = {
+    'HOT-AME-01': 1,
+    'HOT-LAT-02': 2,
+    'HOT-CAP-03': 3,
+    'HOT-TAR-04': 4,
+    'HOT-CHA-05': 5,
+    'COL-LAT-06': 6,
+    'COL-AME-07': 7,
+    'COL-TAR-08': 8,
+    'COL-CHA-09': 9,
+}
+
+const imageBySku: Record<string, string> = {
+    'HOT-AME-01': americanImg,
+    'HOT-LAT-02': latteImg,
+    'HOT-CAP-03': capuccinoImg,
+    'HOT-TAR-04': taroImg,
+    'HOT-CHA-05': naturalChaiImg,
+    'COL-LAT-06': icedLatteImg,
+    'COL-AME-07': icedAmericanImg,
+    'COL-TAR-08': icedTaroImg,
+    'COL-CHA-09': icedChaiImg,
+}
 
 function MenuPage() {
     const [cart, setCart] = useState<CartItem[]>([])
@@ -35,6 +48,14 @@ function MenuPage() {
     const [isCreatingOrder, setIsCreatingOrder] = useState(false)
     const [orderMessage, setOrderMessage] = useState('')
     const [orderError, setOrderError] = useState('')
+    const [coffees, setCoffees] = useState<CoffeeItem[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [loadError, setLoadError] = useState('');
+
+    useEffect(() => {
+        loadMenu()
+    }, [])
+
 
     const handleToggleSort = () => {
         setSortOrder((currentSortOrder) => {
@@ -49,6 +70,28 @@ function MenuPage() {
         })
     }
 
+    const loadMenu = async () => {
+        setIsLoading(true)
+        setLoadError('')
+
+     try {
+        
+        const inventory  = await getInventory()
+        const menuItems = inventory.map((item) => ({
+            productId: productIdBySku[item.sku],
+            name: item.name,
+            price: item.price,
+            stock: item.stock,
+            image: imageBySku[item.sku]
+        }))
+        setCoffees(menuItems)
+     } catch {
+        setLoadError('Could not load menu')
+     } finally {
+        setIsLoading(false)
+     }
+
+    }
 
     const handleAddToCart = (coffee: CoffeeItem) => {
         setOrderMessage('')
@@ -186,7 +229,11 @@ function MenuPage() {
                     </div>
 
                     <div className="menu-catalog">
-                        {sortedCoffees.length > 0 ? (
+                        {isLoading ? (
+                            <div className="menu-empty">Loading menu...</div>
+                        ) : loadError ? (
+                            <div className="menu-empty">{loadError}</div>
+                        ) : sortedCoffees.length > 0 ? (
                             <MenuCards coffees={sortedCoffees} onAddToCart={handleAddToCart} />
                         ) : (
                             <div className="menu-empty">No coffees found</div>
