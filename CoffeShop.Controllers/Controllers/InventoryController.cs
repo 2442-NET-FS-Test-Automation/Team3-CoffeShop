@@ -42,7 +42,7 @@ public class InventoryController : ControllerBase
     [HttpGet("{sku}")]
     public async Task<ActionResult<InventoryItemDto>> GetBySku(string sku)
     {
-        var item = _service.BySku(sku);
+        var item = await _service.BySku(sku);
 
         if (item is null)
         {
@@ -59,7 +59,7 @@ public class InventoryController : ControllerBase
     [Authorize(Roles = "Manager")]
     public async Task<ActionResult<InventoryItemDto>> Create(InventoryItemOpsDto newItem)
     {
-        var created = _service.Add(newItem);
+        var created = await _service.Add(newItem);
         var response = _mapper.Map<InventoryItemDto>(created);
 
         _cache.Remove("inventory:all");
