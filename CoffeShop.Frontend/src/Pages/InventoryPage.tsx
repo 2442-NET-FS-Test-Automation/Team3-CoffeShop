@@ -1,7 +1,7 @@
 import { use, useEffect, useState } from "react";
 import { api } from "../api/client";
 import "./Inventorypage.css";
-import type { InventoryItem } from "../api/inventory";
+import { editDrink, getInventoryItem, type InventoryItem } from "../api/inventory";
 import { useAuth } from "../auth/useAuth";
 
 export interface Product 
@@ -21,6 +21,12 @@ const InventoryPage = () => {
     const [products, setProducts] = useState<InventoryItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+    const [editingProduct, setEditingProduct] = useState<InventoryItem | null>(null);
+    const [isSaving, setIsSaving] = useState(false);
+    const [saveError, setSaveError] = useState<string | null>(null);
+
+    const [isClosing, setIsClosing] = useState(false);
 
     useEffect(() => {
         fetchInventory();
@@ -46,11 +52,61 @@ const InventoryPage = () => {
         }
     };
 
+    const openEditModal = (product: InventoryItem) => {
+
+        setEditingProduct({ ...product });
+        setSaveError(null);
+    }
+
+    const closeEditModal = () => {
+
+        setIsClosing(true);
+        setTimeout(() => {
+            setEditingProduct(null);
+            setSaveError(null);
+            setIsClosing(false);
+        }, 200);
+    }
+
+    const handleEditChange = (field: keyof InventoryItem, value: string) => {
+
+            if(!editingProduct) return;
+
+            const current = editingProduct;
+                setEditingProduct({
+                    ...current,
+                    [field]: field === 'price' || field === 'stock'? Number(value) : value,
+                });
+    }
+
+    const handleEditSave = async () => {
+        if(!editingProduct) return;
+        setIsSaving(true);
+        setSaveError(null);
+
+        try{
+            await editDrink({
+                sku: editingProduct.sku,
+                name: editingProduct.name,
+                price: editingProduct.price,
+                stock: editingProduct.stock
+            });
+            setProducts(prev => prev.map(p => (p.sku === editingProduct.sku ? editingProduct : p))
+        );
+        closeEditModal();
+        }catch (err){
+            console.error("Failed updating product", err)
+            setSaveError("The product can't be saved");
+        }finally{
+            setIsSaving(false);
+        }
+    }
+
     const totalSKUs = products?.length;
     const lowStock = products?.filter(p => p.stock < 10).length;
 
 
-    return (
+  return (
         <div className="inventory-wrapper">
             
             <div className="inventory-metrics">
@@ -90,39 +146,27 @@ const InventoryPage = () => {
                             {products.length === 0 ? (
                                 <tr>
                                     <td colSpan={userRole === 'Manager' ? 6 : 5} className="empty-row">
-                                        No hay productos en el inventario.
+                                        There is no Products on the inentory.
                                     </td>
                                 </tr>
                             ) : (
-
                                 products.map((product) => (
                                     <tr key={product.sku}>
-
+                                        <td>{product.sku}</td>
+                                        <td className="item-name">{product.name}</td>
                                         <td>
-                                            {product.sku}
+                                            <span className="category-badge">General</span>
                                         </td>
-                                        <td className="item-name">
-                                            {product.name}
-                                            </td>
-
-                                        <td>
-                                            <span className="category-badge">
-                                                General
-                                            </span>
-                                        </td>
-
-                                        <td>
-                                            ${product.price ? product.price.toFixed(2) : "0.00"}
-                                        </td >
-
+                                        <td>${product.price ? product.price.toFixed(2) : "0.00"}</td>
                                         <td className={product.stock < 10 ? 'text-red' : 'text-green'}>
                                             {product.stock}
                                         </td>
-
                                         {userRole === 'Manager' && (
                                             <td className="text-right">
-                                                <button className="action-btn"> Edit </button>
-                                        </td>
+                                                <button className="action-btn" onClick={() => openEditModal(product)}>
+                                                    Edit
+                                                </button>
+                                            </td>
                                         )}
                                     </tr>
                                 ))
@@ -131,6 +175,53 @@ const InventoryPage = () => {
                     </table>
                 )}
             </div>
+
+            {editingProduct && (
+                <div className={`modal-overlay ${isClosing ? 'closing' : ''}`} onClick={closeEditModal}>
+                    <div className={`modal-content ${isClosing ? 'closing' : ''}`}   onClick={(e) => e.stopPropagation()}>
+                        <h3>Edit product</h3>
+
+                        {saveError && <p className="error-text">{saveError}</p>}
+
+                        <label className="modal-label">
+                            Name
+                            <input
+                                type="text"
+                                value={editingProduct.name}
+                                onChange={(e) => handleEditChange('name', e.target.value)}
+                            />
+                        </label>
+
+                        <label className="modal-label">
+                            Price
+                            <input
+                                type="number"
+                                step="0.01"
+                                value={editingProduct.price}
+                                onChange={(e) => handleEditChange('price', e.target.value)}
+                            />
+                        </label>
+
+                        <label className="modal-label">
+                            Stock
+                            <input
+                                type="number"
+                                value={editingProduct.stock}
+                                onChange={(e) => handleEditChange('stock', e.target.value)}
+                            />
+                        </label>
+
+                        <div className="modal-actions">
+                            <button className="action-btn" onClick={closeEditModal} disabled={isSaving}>
+                                Cancel
+                            </button>
+                            <button className="add-btn" onClick={handleEditSave} disabled={isSaving}>
+                                {isSaving ? 'Guardando...' : 'Guardar'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
