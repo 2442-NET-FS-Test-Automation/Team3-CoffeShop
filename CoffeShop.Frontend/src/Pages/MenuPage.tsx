@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useLocation } from 'react-router-dom' // <-- Importamos useLocation
 import MenuCards from '../Components/MenuCards/MenuCards.tsx'
 import CartPanel from '../Components/CartPanel/CartPanel.tsx'
 import type { CartItem, CoffeeItem } from '../Components/MenuCards/menuTypes'
@@ -44,25 +45,38 @@ const imageBySku: Record<string, string> = {
 
 function MenuPage() {
     // Principal state
+    const location = useLocation() // <-- Hook para leer la ruta actual y su estado
+    const [welcomeMessage, setWelcomeMessage] = useState<string | null>(null) // <-- Estado para nuestro mensaje
+    
     const [cart, setCart] = useState<CartItem[]>([])
     const [searchTerm, setSearchTerm] = useState<string>('')
     const [sortOrder, setSortOrder] = useState<SortOrder>('none')
     const [isCreatingOrder, setIsCreatingOrder] = useState(false)
     const [orderMessage, setOrderMessage] = useState('')
     const [orderError, setOrderError] = useState('')
-    const [coffees, setCoffees] = useState<CoffeeItem[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [loadError, setLoadError] = useState('');
+    const [coffees, setCoffees] = useState<CoffeeItem[]>([])
+    const [isLoading, setIsLoading] = useState(true)
+    const [loadError, setLoadError] = useState('')
+
+    useEffect(() => {
+        if (location.state && location.state.justLoggedIn) {
+            setWelcomeMessage('Welcome again!')
+            
+            window.history.replaceState({}, document.title)
+
+            const timer = setTimeout(() => setWelcomeMessage(null), 4000)
+            return () => clearTimeout(timer)
+        }
+    }, [location])
+
+    useEffect(() => {
+        loadMenu()
+    }, [])
 
     const handleToggleSort = () => {
         setSortOrder((currentSortOrder) => {
-            if (currentSortOrder === 'none') {
-                return 'asc'
-            }
-
-            if (currentSortOrder === 'asc') {
-                return 'desc'
-            }
+            if (currentSortOrder === 'none') return 'asc'
+            if (currentSortOrder === 'asc') return 'desc'
             return 'none'
         })
     }
@@ -88,6 +102,21 @@ function MenuPage() {
         setIsLoading(false)
      }
 
+        try {
+            const inventory  = await getInventory()
+            const menuItems = inventory.map((item) => ({
+                productId: productIdBySku[item.sku],
+                name: item.name,
+                price: item.price,
+                stock: item.stock,
+                image: imageBySku[item.sku]
+            }))
+            setCoffees(menuItems)
+        } catch {
+            setLoadError('Could not load menu')
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     useEffect(() => {
@@ -100,24 +129,18 @@ function MenuPage() {
         setOrderError('')
         setCart((currentCart) => {
             const currentItem = currentCart.find((item) => item.productId === coffee.productId)
-
             if (currentItem) {
-                if (currentItem.quantity >= coffee.stock) {
-                    return currentCart
-                }
-
+                if (currentItem.quantity >= coffee.stock) return currentCart
                 return currentCart.map((item) =>
                     item.productId === coffee.productId
                         ? { ...item, quantity: item.quantity + 1 }
                         : item
                 )
             }
-
             return [...currentCart, { ...coffee, quantity: 1 }]
         })
     }
 
-    // CartPanel calls this when the cashier presses the minus button.
     const handleDecreaseCartItem = (productId: number) => {
         setOrderMessage('')
         setOrderError('')
@@ -132,7 +155,6 @@ function MenuPage() {
         )
     }
 
-    // CartPanel calls this when the cashier removes a full line from the ticket.
     const handleRemoveCartItem = (productId: number) => {
         setOrderMessage('')
         setOrderError('')
@@ -154,17 +176,11 @@ function MenuPage() {
             quantity: item.quantity,
         }))
 
-        const createOrderDto = {
-            lines: orderLines,
-        }
-
         try {
-            const createdOrder = await createOrder(createOrderDto)
+            const createdOrder = await createOrder({ lines: orderLines })
             await loadMenu()
             setCart([])
-            setOrderMessage(
-                `Order #${createdOrder.orderId} created. Total: $${createdOrder.total.toFixed(2)}`
-            )
+            setOrderMessage(`Order #${createdOrder.orderId} created. Total: $${createdOrder.total.toFixed(2)}`)
         } catch {
             setOrderError('Could not create the order. Check stock and try again.')
         } finally {
@@ -182,14 +198,8 @@ function MenuPage() {
     )
 
     const sortedCoffees = [...filteredCoffees].sort((a, b) => {
-        if (sortOrder === 'asc') {
-            return a.price - b.price
-        }
-
-        if (sortOrder === 'desc') {
-            return b.price - a.price
-        }
-
+        if (sortOrder === 'asc') return a.price - b.price
+        if (sortOrder === 'desc') return b.price - a.price
         return 0
     })
 
@@ -202,6 +212,14 @@ function MenuPage() {
 
     return (
         <section className="menu-page">
+            
+            {/* BURBUJA DE BIENVENIDA FLOTANTE */}
+            {welcomeMessage && (
+                <div className="floating-success-bubble">
+                    {welcomeMessage}
+                </div>
+            )}
+
             <div className="menu-workspace">
                 <div className="menu-main">
                     <div className="menu-page-header">
@@ -209,7 +227,6 @@ function MenuPage() {
                             <p className="menu-page-kicker">Barista counter</p>
                             <h1>Menu</h1>
                         </div>
-
                         <div className="menu-sort-order">
                             <button
                                 type="button"
@@ -219,7 +236,6 @@ function MenuPage() {
                                 {sortButtonLabel}
                             </button>
                         </div>
-
                         <div className="menu-search-control">
                             <input
                                 className="menu-search"
@@ -245,6 +261,7 @@ function MenuPage() {
                 </div>
                         
                 {/* CartPanel renders the ticket UI; MenuPage keeps ownership of cart state. */}
+
                 <CartPanel
                     cart={cart}
                     cartItemCount={cartItemCount}
