@@ -1,6 +1,6 @@
 import "./LoginPage.css";
 import logo from '../assets/CoffeShopLogo.png';
-import { type SyntheticEvent, useState } from "react";
+import { type SyntheticEvent, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Register } from "../api/auth";
 
@@ -12,8 +12,15 @@ const RegisterPage = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [message, setMessage] = useState<{ text: string, type: 'error' | 'succes'} | null>(null);
+    const [message, setMessage] = useState<{ text: string, type: 'error' | 'success'} | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        if (message) {
+            const timer = setTimeout(() => setMessage(null), 4000);
+            return () => clearTimeout(timer);
+        }
+    }, [message]);
 
     const handleSubmit = async (event: SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -26,9 +33,9 @@ const RegisterPage = () => {
             return;
         }
 
-        try{
-            await Register (username, password, email, name);
-            setMessage({ text: "The barista was succesfully registered!", type: "succes" });
+        try {
+            await Register(username, password, email, name);
+            setMessage({ text: "The barista was succesfully registered!", type: "success" });
 
             setUsername("");
             setPassword(""); 
@@ -36,19 +43,26 @@ const RegisterPage = () => {
             setEmail("");
             setName("");
         
-        }catch (error) {
+        } catch (error) {
             setMessage({ text: "There was an issue registering.", type: "error"});
-        }
-        finally{
+        } finally {
             setIsLoading(false);
         }
     };
 
     return (
     <div className="login-page-wrapper">
-                    <button type="button" className="back-button" onClick={() => navigate('/menu')} >
-                        Back to menu
-                    </button>
+        
+        {message && (
+            <div className={message.type === 'error' ? 'floating-error-bubble' : 'floating-success-bubble'}>
+                {message.text}
+            </div>
+        )}
+
+        <button type="button" className="back-button" onClick={() => navigate('/menu')} >
+            Back to menu
+        </button>
+        
         <div className="login"> 
             
             <div className="log-welcome">
@@ -114,12 +128,6 @@ const RegisterPage = () => {
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         required
                     />
-
-                    {message && (
-                        <p>
-                            {message.text}
-                        </p>
-                    )}
 
                     <button type="submit" disabled={isLoading}>
                         {isLoading ? "Creating account..." : "Create Account"}
