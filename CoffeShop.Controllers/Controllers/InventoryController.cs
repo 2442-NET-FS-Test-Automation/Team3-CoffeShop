@@ -21,7 +21,7 @@ public class InventoryController : ControllerBase
     }
 
     [HttpGet]
-    [ResponseCache(Duration = 30)]
+    [ResponseCache(Duration = 3)]
     public async Task<ActionResult<IEnumerable<InventoryItemDto>>> Get()
     {
         var dtos = await _cache.GetOrCreateAsync("inventory:all", async entry =>
@@ -29,7 +29,7 @@ public class InventoryController : ControllerBase
             // Setting things about our cache entry - like "expire no matter what after 2 minutes"
             entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2);
 
-            // Actually get the items from DB 
+            // Actually get the items from DB
             var items = await _service.All();
 
             // Return to front end (and also add to cache, since we're wrapped by _cache.GetOrCreateAsync)
@@ -42,7 +42,7 @@ public class InventoryController : ControllerBase
     [HttpGet("{sku}")]
     public async Task<ActionResult<InventoryItemDto>> GetBySku(string sku)
     {
-        var item = _service.BySku(sku);
+        var item = await _service.BySku(sku);
 
         if (item is null)
         {
@@ -59,7 +59,7 @@ public class InventoryController : ControllerBase
     [Authorize(Roles = "Manager")]
     public async Task<ActionResult<InventoryItemDto>> Create(InventoryItemOpsDto newItem)
     {
-        var created = _service.Add(newItem);
+        var created = await _service.Add(newItem);
         var response = _mapper.Map<InventoryItemDto>(created);
 
         _cache.Remove("inventory:all");
@@ -71,7 +71,11 @@ public class InventoryController : ControllerBase
     public async Task<ActionResult> Modify(InventoryItemOpsDto newItem)
     {
         var modified = await _service.Change(newItem);
-        var response = _mapper.Map<InventoryItemDto>(modified);
+
+        if (modified is null)
+        {
+            return NotFound();
+        }
 
         _cache.Remove("inventory:all");
 
