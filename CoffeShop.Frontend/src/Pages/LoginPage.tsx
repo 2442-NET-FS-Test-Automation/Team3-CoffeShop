@@ -26,6 +26,8 @@ const LoginPage = () => {
     const navigate = useNavigate();
     const {login, status} = useAuth();
 
+    
+
     return (
     <div className="login-page-wrapper">
         <div className="login">

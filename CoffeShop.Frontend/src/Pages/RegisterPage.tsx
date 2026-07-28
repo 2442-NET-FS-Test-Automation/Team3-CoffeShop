@@ -46,6 +46,9 @@ const RegisterPage = () => {
 
     return (
     <div className="login-page-wrapper">
+                    <button type="button" className="back-button" onClick={() => navigate('/menu')} >
+                        Back to menu
+                    </button>
         <div className="login"> 
             
             <div className="log-welcome">

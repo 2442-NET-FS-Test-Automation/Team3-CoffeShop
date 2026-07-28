@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../api/client";
 import "./Inventorypage.css";
-import { editDrink, type InventoryItem } from "../api/inventory";
+import { editDrink, createDrink, type InventoryItem, type CreateInventoryBody } from "../api/inventory";
 import { useAuth } from "../auth/useAuth";
 
 const normalizeStock = (stock: number) => {
@@ -9,6 +9,14 @@ const normalizeStock = (stock: number) => {
 }
 
 const InventoryPage = () => {
+
+    const emptyProduct: CreateInventoryBody = { sku: '', name: '', price: 0, stock: 0 };
+    const [newProduct, setNewProduct] = useState<CreateInventoryBody>(emptyProduct);
+
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [isAddModalClose, setIsAddModdalClose] = useState(false);
+    const [isAdding, setIsAdding] = useState(false);
+    const [addError, setIsAddError] = useState<string | null>(null);
 
     const { user } = useAuth();
     const userRole = user?.role || "Barista";
@@ -48,6 +56,76 @@ const InventoryPage = () => {
 
         fetchInventory();
     }, [])
+
+    const fetchInventory = async () => {
+            setIsLoading(true);
+        try
+        {
+            const response = await api.get("/api/inventory");
+            setProducts(response.data);
+            setError(null);
+
+        } 
+        catch(err)
+        {
+            console.error("Error loading the inventory", err);
+            setError("There was an issue with the inventory");
+        }
+        finally
+        {
+            setIsLoading(false);
+        }
+    };
+
+        const openAddModal = () => {
+
+        setNewProduct(emptyProduct);
+        setIsAddError(null);
+        setIsAddModalOpen(true);
+    }
+
+    const closeAddModal = () => {
+
+        setIsAddModdalClose(true);
+        setTimeout(() => {
+            setIsAddModalOpen(false);
+            setIsAddError(null);
+            setIsAddModdalClose(false);
+        }, 200);
+    }
+
+    const handleNewProductChange = (field: keyof CreateInventoryBody, value: string) => {
+
+        setNewProduct(prev => ({
+            ...prev,
+            [field]: field === 'price' || field === 'stock' ? Number(value) : value,
+        }));
+    };
+
+    const handleAddProduct = async () => {
+    if (!newProduct.sku.trim() || !newProduct.name.trim()) {
+        setIsAddError("Sku and name are required");
+        return;
+    }
+    if (newProduct.price <= 0) {
+        setIsAddError("Price must be greater than 0");
+        return;
+    }
+
+    setIsAdding(true);
+    setIsAddError(null);
+    try {
+        const created = await createDrink(newProduct);
+        setProducts(prev => [...prev, created]);
+        closeAddModal();
+    } catch (err) {
+        console.error("Failed adding product", err);
+        setIsAddError("The product can't be added");
+    } finally {
+        setIsAdding(false);
+    }
+}
+    
 
     const openEditModal = (product: InventoryItem) => {
 
@@ -129,7 +207,7 @@ const InventoryPage = () => {
             <div className="inventory-container">
                 <div className="inventory-header">
                     <h2>Inventory Overview</h2>
-                    {userRole === 'Manager' && <button className="add-btn">+ Add New Product</button> }
+                    {userRole === 'Manager' && <button className="add-btn" onClick={openAddModal} >+ Add New Product</button> }
                 </div>
 
                 {error && <p className="error-text">{error}</p>}
@@ -230,6 +308,65 @@ const InventoryPage = () => {
                     </div>
                 </div>
             )}
+            {isAddModalOpen && (
+    <div className={`modal-overlay ${isAddModalClose ? 'closing' : ''}`} onClick={closeAddModal}>
+        <div className={`modal-content ${isAddModalClose ? 'closing' : ''}`} onClick={(e) => e.stopPropagation()}>
+            <h3>Add product</h3>
+
+            {addError && <p className="error-text">{addError}</p>}
+
+            <label className="modal-label">
+                SKU
+                <input
+                    type="text"
+                    maxLength={20}
+                    value={newProduct.sku}
+                    onChange={(e) => handleNewProductChange('sku', e.target.value)}
+                />
+            </label>
+
+            <label className="modal-label">
+                Name
+                <input
+                    type="text"
+                    maxLength={200}
+                    value={newProduct.name}
+                    onChange={(e) => handleNewProductChange('name', e.target.value)}
+                />
+            </label>
+
+            <label className="modal-label">
+                Price
+                <input
+                    type="number"
+                    step="0.01"
+                    min="0.01"
+                    value={newProduct.price}
+                    onChange={(e) => handleNewProductChange('price', e.target.value)}
+                />
+            </label>
+
+            <label className="modal-label">
+                Stock
+                <input
+                    type="number"
+                    min="0"
+                    value={newProduct.stock}
+                    onChange={(e) => handleNewProductChange('stock', e.target.value)}
+                />
+            </label>
+
+            <div className="modal-actions">
+                <button className="action-btn" onClick={closeAddModal} disabled={isAdding}>
+                    Cancel
+                </button>
+                <button className="add-btn" onClick={handleAddProduct} disabled={isAdding}>
+                    {isAdding ? 'Adding...' : 'Add'}
+                </button>
+            </div>
+        </div>
+    </div>
+)}
         </div>
     );
 };
