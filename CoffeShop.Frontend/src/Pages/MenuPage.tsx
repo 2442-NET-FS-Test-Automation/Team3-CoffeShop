@@ -12,6 +12,7 @@ import icedLatteImg from '../assets/Menu_assets/ICED_LATTE.png'
 import icedAmericanImg from '../assets/Menu_assets/ICED_AMERICAN.png'
 import icedTaroImg from '../assets/Menu_assets/ICED_TARO.png'
 import icedChaiImg from '../assets/Menu_assets/ICED_CHAI.png'
+import productNewImg from '../assets/Menu_assets/Product_new.png'
 import './MenuPage.css'
 import { createOrder } from '../api/orders'
 import { getInventory } from '../api/inventory'
@@ -43,6 +44,7 @@ const imageBySku: Record<string, string> = {
 }
 
 function MenuPage() {
+    // Principal state
     const location = useLocation() // <-- Hook para leer la ruta actual y su estado
     const [welcomeMessage, setWelcomeMessage] = useState<string | null>(null) // <-- Estado para nuestro mensaje
     
@@ -82,6 +84,24 @@ function MenuPage() {
     const loadMenu = async () => {
         setIsLoading(true)
         setLoadError('')
+
+     try {
+        
+        const inventory  = await getInventory()
+        const menuItems = inventory.map((item) => ({
+            productId: productIdBySku[item.sku],
+            name: item.name,
+            price: item.price,
+            stock: item.stock,
+            image: imageBySku[item.sku] ?? productNewImg
+        }))
+        setCoffees(menuItems)
+     } catch {
+        setLoadError('Could not load menu')
+     } finally {
+        setIsLoading(false)
+     }
+
         try {
             const inventory  = await getInventory()
             const menuItems = inventory.map((item) => ({
@@ -99,6 +119,11 @@ function MenuPage() {
         }
     }
 
+    useEffect(() => {
+        void Promise.resolve().then(loadMenu)
+    }, [])
+
+    //Function to add to the ticket
     const handleAddToCart = (coffee: CoffeeItem) => {
         setOrderMessage('')
         setOrderError('')
@@ -163,6 +188,7 @@ function MenuPage() {
         }
     }
 
+    // These derived totals are passed into CartPanel 
     const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0)
     const cartTotal = cart.reduce((total, item) => total + item.quantity * item.price, 0)
 
@@ -226,13 +252,15 @@ function MenuPage() {
                             <div className="menu-empty">Loading menu...</div>
                         ) : loadError ? (
                             <div className="menu-empty">{loadError}</div>
-                        ) : sortedCoffees.length > 0 ? (
+                        ) : sortedCoffees.length > 0 ? ( //Passing function to a Children
                             <MenuCards coffees={sortedCoffees} onAddToCart={handleAddToCart} />
                         ) : (
                             <div className="menu-empty">No coffees found</div>
                         )}
                     </div>
                 </div>
+                        
+                {/* CartPanel renders the ticket UI; MenuPage keeps ownership of cart state. */}
 
                 <CartPanel
                     cart={cart}
