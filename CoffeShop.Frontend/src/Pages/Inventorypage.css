@@ -1,7 +1,6 @@
 .inventory-wrapper {
     padding: 2rem;
-    color: #2f1b0c;
-    background-color: #faf4eb; 
+    color: #fbfaf9;
     min-height: calc(100vh - 100px);
     font-family: inherit;
 }
@@ -15,10 +14,10 @@
 .metric-card {
     flex: 1;
     padding: 1.5rem;
-    background-color: #fff8ef; /* Mismo fondo de tu login */
-    border: 1px solid #ead8c0; /* Mismo borde de tu login */
-    border-radius: 1rem;       /* Mismo radio de tu login */
-    box-shadow: 0 10px 25px rgba(47, 27, 12, 0.08); /* Sombra suave café */
+    background-color: #fff8ef; 
+    border: 1px solid #ead8c0; 
+    border-radius: 1rem;      
+    box-shadow: 0 10px 25px rgba(47, 27, 12, 0.08); 
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -27,19 +26,19 @@
 }
 
 .metric-card.metric-alert {
-    border: 2px solid #b53d39; /* Rojo un poco más terroso */
+    border: 2px solid #b53d39; 
     background-color: #fdf2f2;
 }
 
 .metric-gold {
     margin: 0 0 0.5rem 0;
-    color: #8a5a2f; /* El color de tu botón de login */
+    color: #8a5a2f; 
     font-size: 2rem;
 }
 
 .metric-green {
     margin: 0 0 0.5rem 0;
-    color: #3a7842; /* Un verde un poco más natural */
+    color: #3a7842; 
     font-size: 2rem;
 }
 
@@ -99,32 +98,82 @@
 .inventory-table {
     width: 100%;
     border-collapse: collapse;
-    text-align: center;
+    table-layout: fixed;
 }
 
-.inventory-table th {
-    border-bottom: 2px solid #ead8c0;
-    color: #4b2d16;
-    font-size: 0.95rem;
-    font-weight: 700;
-    padding: 12px 10px;
-    text-align: center;
-}
-
+.inventory-table th,
 .inventory-table td {
     border-bottom: 1px solid #ead8c0;
     border-right: none;
     color: #2f1b0c;
-    word-wrap: break-word;
-    padding: 15px 10px;
-    text-align: center;
+    padding: 1rem 1.15rem;
     vertical-align: middle;
+    word-wrap: break-word;
 }
 
-.item-name {
+.inventory-table th {
+    border-bottom-width: 2px;
+    color: #4b2d16;
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-align: left;
+}
+
+.inventory-table tbody tr:hover {
+    background-color: rgba(234, 216, 192, 0.22);
+}
+
+.inventory-table th:nth-child(1),
+.inventory-table td:nth-child(1) {
+    width: 18%;
+    text-align: left;
+}
+
+.inventory-table th:nth-child(2),
+.inventory-table td:nth-child(2) {
+    width: 25%;
+    text-align: left;
+}
+
+.inventory-table th:nth-child(3),
+.inventory-table td:nth-child(3) {
+    width: 18%;
+    text-align: center;
+}
+
+.inventory-table th:nth-child(4),
+.inventory-table td:nth-child(4) {
+    width: 14%;
+    text-align: right;
+}
+
+.inventory-table th:nth-child(5),
+.inventory-table td:nth-child(5) {
+    width: 12%;
+    text-align: center;
+}
+
+.inventory-table th:nth-child(6),
+.inventory-table td:nth-child(6) {
+    width: 13%;
+    text-align: right;
+}
+
+.inventory-table th:nth-child(1),
+.inventory-table td:nth-child(1),
+.inventory-table th:nth-child(4),
+.inventory-table td:nth-child(4),
+.inventory-table th:nth-child(5),
+.inventory-table td:nth-child(5) {
+    white-space: nowrap;
+}
+
+.inventory-table td.item-name {
+    display: table-cell;
     font-weight: bold;
     color: #2f1b0c;
-    text-align: center;
+    text-align: left;
 }
 
 
@@ -198,6 +247,11 @@
     
     .inventory-wrapper {
         padding: 1rem;
+    }
+
+    .inventory-table th,
+    .inventory-table td {
+        padding: 0.85rem 1rem;
     }
 }
 

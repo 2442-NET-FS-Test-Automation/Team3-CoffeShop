@@ -158,6 +158,7 @@ function MenuPage() {
 
         try {
             const createdOrder = await createOrder(createOrderDto)
+            await loadMenu()
             setCart([])
             setOrderMessage(
                 `Order #${createdOrder.orderId} created. Total: $${createdOrder.total.toFixed(2)}`
