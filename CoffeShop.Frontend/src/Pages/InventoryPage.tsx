@@ -1,22 +1,16 @@
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "../api/client";
 import "./Inventorypage.css";
-import { editDrink, getInventoryItem, type InventoryItem } from "../api/inventory";
+import { editDrink, type InventoryItem } from "../api/inventory";
 import { useAuth } from "../auth/useAuth";
 
-export interface Product 
-{
-    ProductId: number;
-    name: string;
-    price: number;
-    stock: number;
-    soldToday: number;
-
+const normalizeStock = (stock: number) => {
+    return Math.max(0, Math.trunc(Number.isFinite(stock) ? stock : 0));
 }
+
 const InventoryPage = () => {
 
     const { user } = useAuth();
-    console.log(user);
     const userRole = user?.role || "Barista";
     const [products, setProducts] = useState<InventoryItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -29,32 +23,35 @@ const InventoryPage = () => {
     const [isClosing, setIsClosing] = useState(false);
 
     useEffect(() => {
+        const fetchInventory = async () => {
+            setIsLoading(true);
+            try
+            {
+                const response = await api.get<InventoryItem[]>("/api/inventory");
+                setProducts(response.data.map(item => ({
+                    ...item,
+                    stock: normalizeStock(item.stock)
+                })));
+                setError(null);
+
+            }
+            catch(err)
+            {
+                console.error("Error loading the inventory", err);
+                setError("There was an issue with the inventory");
+            }
+            finally
+            {
+                setIsLoading(false);
+            }
+        }
+
         fetchInventory();
     }, [])
 
-    const fetchInventory = async () => {
-            setIsLoading(true);
-        try
-        {
-            const response = await api.get("/api/inventory");
-            setProducts(response.data);
-            setError(null);
-
-        } 
-        catch(err)
-        {
-            console.error("Error loading the inventory", err);
-            setError("There was an issue with the inventory");
-        }
-        finally
-        {
-            setIsLoading(false);
-        }
-    };
-
     const openEditModal = (product: InventoryItem) => {
 
-        setEditingProduct({ ...product });
+        setEditingProduct({ ...product, stock: normalizeStock(product.stock) });
         setSaveError(null);
     }
 
@@ -73,9 +70,16 @@ const InventoryPage = () => {
             if(!editingProduct) return;
 
             const current = editingProduct;
+            const parsedValue = Number(value);
+            const nextValue = field === 'stock'
+                ? normalizeStock(parsedValue)
+                : field === 'price'
+                    ? Number(value)
+                    : value;
+
                 setEditingProduct({
                     ...current,
-                    [field]: field === 'price' || field === 'stock'? Number(value) : value,
+                    [field]: nextValue,
                 });
     }
 
@@ -85,13 +89,15 @@ const InventoryPage = () => {
         setSaveError(null);
 
         try{
-            await editDrink({
+            const sanitizedProduct = {
                 sku: editingProduct.sku,
                 name: editingProduct.name,
                 price: editingProduct.price,
-                stock: editingProduct.stock
-            });
-            setProducts(prev => prev.map(p => (p.sku === editingProduct.sku ? editingProduct : p))
+                stock: normalizeStock(editingProduct.stock)
+            };
+
+            await editDrink(sanitizedProduct);
+            setProducts(prev => prev.map(p => (p.sku === editingProduct.sku ? sanitizedProduct : p))
         );
         closeEditModal();
         }catch (err){
@@ -146,7 +152,7 @@ const InventoryPage = () => {
                             {products.length === 0 ? (
                                 <tr>
                                     <td colSpan={userRole === 'Manager' ? 6 : 5} className="empty-row">
-                                        There is no Products on the inentory.
+                                        There are no products in the inventory.
                                     </td>
                                 </tr>
                             ) : (
@@ -206,6 +212,8 @@ const InventoryPage = () => {
                             Stock
                             <input
                                 type="number"
+                                min="0"
+                                step="1"
                                 value={editingProduct.stock}
                                 onChange={(e) => handleEditChange('stock', e.target.value)}
                             />
