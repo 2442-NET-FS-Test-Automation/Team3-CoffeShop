@@ -56,6 +56,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddSingleton<ITokenService, TokenService>();
 builder.Services.AddScoped<IUserService, UserServices>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
 builder.Services.AddDbContext<CoffeShopDbContext>(o => o.UseSqlServer(conn_string));
