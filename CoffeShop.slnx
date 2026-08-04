@@ -1,4 +1,9 @@
 <Solution>
+  <Folder Name="/CoffeShop.Test/">
+    <Project Path="CoffeShop.Test/CoffeShop.Tests.E2E.Selenium/CoffeShop.Tests.E2E.Selenium.csproj" />
+    <Project Path="CoffeShop.Test/IntegrationTest.Test/IntegrationTest.Test.csproj" />
+    <Project Path="CoffeShop.Test/UnitTest.Tests/UnitTest.Tests.csproj" />
+  </Folder>
   <Project Path="CoffeShop.Controllers/CoffeShop.Controllers.csproj" />
   <Project Path="CoffeShop.Data/CoffeShop.Data.csproj" />
 </Solution>

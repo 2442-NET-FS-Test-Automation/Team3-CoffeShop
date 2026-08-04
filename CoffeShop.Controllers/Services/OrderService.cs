@@ -1,19 +1,18 @@
 using CoffeShop.Controllers.DTOs;
 using CoffeShop.Data;
 using CoffeShop.Data.Entities;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace CoffeShop.Controllers.Services;
 
 public class OrderService : IOrderService
 {
-    private readonly CoffeShopDbContext _db;
+    private readonly IOrderRepository _repo;
     private readonly IMemoryCache _cache;
 
-    public OrderService(CoffeShopDbContext db, IMemoryCache cache)
+    public OrderService(IOrderRepository repo, IMemoryCache cache)
     {
-        _db = db;
+        _repo = repo;
         _cache = cache;
     }
 
@@ -31,9 +30,7 @@ public class OrderService : IOrderService
             throw new ArgumentException("The order must contain at least one product.");
         }
         
-        var user = await _db.Users
-            .Where(p => p.Username == username)
-            .FirstOrDefaultAsync();
+        var user = await _repo.GetUserByUsername(username);
         // Check if the user is valid
         if (user == null)
         {
@@ -50,10 +47,7 @@ public class OrderService : IOrderService
 
         var requestedProductIds = requestedLines.Select(line => line.ProductId).ToList();
 
-        var inventoryItems = await _db.InventoryItems
-            .Include(p => p.product)
-            .Where(p => requestedProductIds.Contains(p.ProductId))
-            .ToListAsync();
+        var inventoryItems = await _repo.GetInventoryItemsByProductIds(requestedProductIds);
         
         var foundProductIds = inventoryItems.Select(item => item.ProductId).ToList();
 
@@ -81,9 +75,6 @@ public class OrderService : IOrderService
             }
         }
 
-        // Start Transaction all go in or we rollback  
-        await using var transaction = await _db.Database.BeginTransactionAsync();
-
         // Create a new order in 
         var order = new Order
         {
@@ -104,9 +95,7 @@ public class OrderService : IOrderService
             inventoryItem.Stock -= requestedLine.Quantity;
         }
 
-        _db.Orders.Add(order);
-        await _db.SaveChangesAsync();
-        await transaction.CommitAsync();
+        await _repo.AddOrder(order);
 
         _cache.Remove("inventory:all");
 
