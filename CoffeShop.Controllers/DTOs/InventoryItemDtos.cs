@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CoffeShop.Controllers.DTOs;
 
-public record InventoryItemDto(string Sku, string Name, int Stock, decimal Price);
+public record InventoryItemDto(int ProductId, string Sku, string Name, int Stock, decimal Price);
 
 public record InventoryItemOpsDto(
     [Required, MaxLength(20)] string Sku,

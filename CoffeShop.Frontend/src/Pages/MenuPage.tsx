@@ -19,18 +19,6 @@ import { getInventory } from '../api/inventory'
 
 type SortOrder = 'none' | 'asc' | 'desc'
 
-const productIdBySku: Record<string, number> = {
-    'HOT-AME-01': 1,
-    'HOT-LAT-02': 2,
-    'HOT-CAP-03': 3,
-    'HOT-TAR-04': 4,
-    'HOT-CHA-05': 5,
-    'COL-LAT-06': 6,
-    'COL-AME-07': 7,
-    'COL-TAR-08': 8,
-    'COL-CHA-09': 9,
-}
-
 const imageBySku: Record<string, string> = {
     'HOT-AME-01': americanImg,
     'HOT-LAT-02': latteImg,
@@ -60,18 +48,17 @@ function MenuPage() {
 
     useEffect(() => {
         if (location.state && location.state.justLoggedIn) {
-            setWelcomeMessage('Welcome again!')
-            
             window.history.replaceState({}, document.title)
 
-            const timer = setTimeout(() => setWelcomeMessage(null), 4000)
-            return () => clearTimeout(timer)
+            const showTimer = setTimeout(() => setWelcomeMessage('Welcome again!'), 0)
+            const hideTimer = setTimeout(() => setWelcomeMessage(null), 4000)
+
+            return () => {
+                clearTimeout(showTimer)
+                clearTimeout(hideTimer)
+            }
         }
     }, [location])
-
-    useEffect(() => {
-        loadMenu()
-    }, [])
 
     const handleToggleSort = () => {
         setSortOrder((currentSortOrder) => {
@@ -85,31 +72,14 @@ function MenuPage() {
         setIsLoading(true)
         setLoadError('')
 
-     try {
-        
-        const inventory  = await getInventory()
-        const menuItems = inventory.map((item) => ({
-            productId: productIdBySku[item.sku],
-            name: item.name,
-            price: item.price,
-            stock: item.stock,
-            image: imageBySku[item.sku] ?? productNewImg
-        }))
-        setCoffees(menuItems)
-     } catch {
-        setLoadError('Could not load menu')
-     } finally {
-        setIsLoading(false)
-     }
-
         try {
             const inventory  = await getInventory()
             const menuItems = inventory.map((item) => ({
-                productId: productIdBySku[item.sku],
+                productId: item.productId,
                 name: item.name,
                 price: item.price,
                 stock: item.stock,
-                image: imageBySku[item.sku]
+                image: imageBySku[item.sku] ?? productNewImg
             }))
             setCoffees(menuItems)
         } catch {

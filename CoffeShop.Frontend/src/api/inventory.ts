@@ -4,6 +4,7 @@ import { api } from "./client";
 
 export interface InventoryItem {
 
+    productId: number;
     sku: string;
     name: string;
     stock: number;

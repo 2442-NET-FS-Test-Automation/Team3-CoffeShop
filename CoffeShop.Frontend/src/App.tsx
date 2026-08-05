@@ -11,7 +11,7 @@ import ProtectedLayout from './Components/ProtectedLayout/ProtectedLayout.tsx'
 function App() {
   return ( 
      <Routes>
-        <Route path='/' element={<Navigate to="/menu" replace />} />
+        <Route path='/' element={<Navigate to="/login" replace />} />
         <Route path='/login' element ={<LoginPage/>}/>
         <Route path='/register' element ={<RegisterPage/>}/>
 
