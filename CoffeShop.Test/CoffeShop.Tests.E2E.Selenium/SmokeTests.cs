@@ -2,6 +2,7 @@ using Xunit;
 using FluentAssertions;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using CoffeShop.Tests.E2E.Selenium.Pages;
 
 namespace CoffeShop.Tests.E2E.Selenium;
 
@@ -26,11 +27,12 @@ public class SmokeTests : IDisposable
     [Fact]
     public void OpeningTheSpa_RedirectsToLogin()
     {
-        _driver.Url.Should().Contain("/login");
-        _driver.FindElement(By.TagName("h2")).Text.Should().Be("The best coffee of Cognizant");
-        var submitButton = _driver.FindElement(By.CssSelector("button[type='submit']"));
-        submitButton.Text.Should().Be("Submit");
-        _driver.FindElement(By.CssSelector("input[type='password']")).GetAttribute("type").Should().Be("password");
+        var loginPage = new LoginPage(_driver);
+        loginPage.Open();
+        loginPage.Url.Should().Contain("login");
+        loginPage.HeadingText.Should().Be("The best coffee of Cognizant");
+        loginPage.SubmitButtonText.Should().Be("Submit");
+        loginPage.PasswordInputType.Should().Be("password");
     }
     [Fact]
     public void LoginPage_HasUsernameAndPasswordInputs()
@@ -38,5 +40,19 @@ public class SmokeTests : IDisposable
         var usernameInput = _driver.FindElement(By.Id("username"));
         usernameInput.GetAttribute("name").Should().Be("username");
         usernameInput.GetAttribute("placeholder").Should().Be("Enter your username");
+    }
+    [Fact]
+    public void Login_WithInvalidCredentials_StaysOnLoginPage()
+    {
+        //Arrange
+        var loginPage = new LoginPage(_driver);
+        loginPage.Open();
+
+        //Act
+        loginPage.LoginAs("baduser", "badpass");
+
+        //Assert
+        loginPage.Url.Should().Contain("login");
+        loginPage.ErrorMessageText.Should().Be("User or password are not valid.");
     }
 }
