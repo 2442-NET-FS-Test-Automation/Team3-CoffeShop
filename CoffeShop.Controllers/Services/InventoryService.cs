@@ -22,7 +22,7 @@ public class InventoryService : IInventoryService
     {
         return _repo.GetInventoryItemBySku(sku);
     }
-
+    //Add InventoryItem
     public Task<InventoryItem> Add(InventoryItemOpsDto dto)
     {
 

@@ -16,4 +16,22 @@ public class OrdersApiTest
     {
         _client = factory.CreateClient();
     }
+
+    [Fact]
+    public async Task PostOrders_WhenOrderLineQuantityIsNegative_ReturnsBadRequest()
+    {
+        // Arrange
+        var dto = new CreateOrderDto(new List<CreateOrderLineDto>
+        {
+            new CreateOrderLineDto(1, -1)
+        });
+
+        // Act
+        var response = await _client.PostAsJsonAsync("/api/orders", dto);
+        var content = await response.Content.ReadAsStringAsync();
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        content.Should().Contain("Quantity");
+    }
 }
