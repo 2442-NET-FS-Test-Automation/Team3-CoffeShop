@@ -5,7 +5,7 @@ describe('US3.1 - Authentication and Security (E2E)', () => {
         cy.visit("/login");
 
         cy.get('input[name="username"]').type('Barista2');
-        cy.get('input[name="password').type('Barista2!');
+        cy.get('input[name="password').type('Barista2');
         cy.get('button[type="submit"]').click();
 
         cy.url().should('include', '/menu');
