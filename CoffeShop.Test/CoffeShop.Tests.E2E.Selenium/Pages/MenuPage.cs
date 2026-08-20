@@ -1,13 +1,12 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
+using CoffeShop.Test.E2E.Config;
 
-namespace CoffeShop.Tests.E2E.Selenium.Pages;
+namespace CoffeShop.Test.E2E.Pages;
 
 public class MenuPage
 {
-    private const string BaseUrl = "http://localhost:5173";
-
     private const string MockConsumerFlowScript = """
 (() => {
     const fakeBaristaToken =
@@ -72,24 +71,30 @@ public class MenuPage
 })();
 """;
 
-    private readonly ChromeDriver _driver;
+    private readonly IWebDriver _driver;
     private readonly WebDriverWait _wait;
 
-    public MenuPage(ChromeDriver driver)
+    public MenuPage(IWebDriver driver, WebDriverWait wait)
     {
         _driver = driver;
-        _wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(8));
+        _wait = wait;
     }
 
     public string Url => _driver.Url;
 
-    public MenuPage OpenWithMockedConsumerFlow()
+    public MenuPage OpenWithMockedConsumerFlow(string? baseUrl = null)
     {
-        _driver.ExecuteCdpCommand(
+        if (_driver is not ChromeDriver chromeDriver)
+        {
+            throw new NotSupportedException("El flujo con mocks requiere ChromeDriver para registrar el script CDP.");
+        }
+
+        chromeDriver.ExecuteCdpCommand(
             "Page.addScriptToEvaluateOnNewDocument",
             new Dictionary<string, object?> { ["source"] = MockConsumerFlowScript });
 
-        _driver.Navigate().GoToUrl($"{BaseUrl}/menu");
+        var targetUrl = baseUrl ?? TestSettings.BaseUrl;
+        _driver.Navigate().GoToUrl($"{targetUrl.TrimEnd('/')}/menu");
         WaitForText("Menu");
         WaitForText("American");
 
