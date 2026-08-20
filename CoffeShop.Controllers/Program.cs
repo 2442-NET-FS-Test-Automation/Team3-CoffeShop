@@ -15,7 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 //Db connection
 //var conn_string = "Server=localhost,1435;Database=coffeshopv2;User Id=sa;Password=Deniro_007;TrustServerCertificate=true"; //Change it in each laptop
 var conn_string = builder.Configuration.GetConnectionString("CoffeShop") ??
-"Server=localhost,1435;Database=coffeshopv2;User Id=sa;Password=Deniro_007;TrustServerCertificate=false";
+"Server=localhost,1435;Database=coffeshopv2;User Id=sa;Password=Deniro_007;TrustServerCertificate=true";
 // var conn_string =
 //     builder.Configuration.GetConnectionString("CoffeShop")
 //     ?? throw new InvalidOperationException(
