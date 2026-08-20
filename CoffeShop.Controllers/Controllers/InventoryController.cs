@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class InventoryController : ControllerBase
