@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using CoffeShop.Controllers.DTOs;
 using CoffeShop.Controllers.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
