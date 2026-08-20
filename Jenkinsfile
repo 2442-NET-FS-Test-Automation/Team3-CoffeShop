@@ -27,7 +27,7 @@ pipeline {
         stage('Build image') {
             steps {
                 dir(env.APP_DIR) {
-                    bat 'docker build -t %IMAGE%:%BUILD_NUMBER% -t %IMAGE%:latest -f Library.ControllerApi/Dockerfile .'
+                    bat 'docker build -t %IMAGE%:%BUILD_NUMBER% -t %IMAGE%:latest -f CoffeShop.Controllers/Dockerfile .'
                 }
             }
         }
