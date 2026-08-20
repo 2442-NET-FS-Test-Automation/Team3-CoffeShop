@@ -1,55 +1,59 @@
 using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
 
-namespace CoffeShop.Tests.E2E.Selenium.Pages;
-
-
-public class LoginPage
+namespace CoffeShop.Test.E2E.Pages
 {
-    private readonly IWebDriver _driver;
-
-    // Doesn't save a fixed Url. Every call reads a current Url
-    public string Url => _driver.Url;
-
-    public string HeadingText => _driver.FindElement(By.TagName("h2")).Text;
-    public string SubmitButtonText => _driver.FindElement(By.CssSelector("button[type='submit']")).Text;
-
-    public string? PasswordInputType => _driver.FindElement(By.CssSelector("input[type='password']")).GetAttribute("type");
-    public string ErrorMessageText => _driver.FindElement(By.CssSelector(".floating-error-bubble")).Text;
-
-    //Constructor
-    public LoginPage(IWebDriver driver){ _driver = driver; }
-
-    public LoginPage Open()
+    /// <summary>
+    /// Page Object de la pantalla de autenticación.
+    /// Los selectores reflejan los IDs y clases publicados por el frontend.
+    /// </summary>
+    public class LoginPage
     {
-        _driver.Navigate().GoToUrl("http://localhost:5173/");
-        return this;
-    }
+        private readonly IWebDriver _driver;
+        private readonly WebDriverWait _wait;
 
-    public LoginPage TypeUsername(string username)
-    {
-        var usernameInput = _driver.FindElement(By.Id("username"));
-        usernameInput.Clear();
-        usernameInput.SendKeys(username);
-        return this;
-    }
-    public LoginPage TypePassword(string password)
-    {
-        var passwordInput = _driver.FindElement(By.Id("password"));
-        passwordInput.Clear();
-        passwordInput.SendKeys(password);
-        return this;
-    }
-    public LoginPage Submit()
-    {
-        var submitButton = _driver.FindElement(By.CssSelector("button[type='submit']"));
-        submitButton.Click();
-        return this;
-    }
-    public LoginPage LoginAs(string username, string password)
-    {   
-        TypeUsername(username);
-        TypePassword(password);
-        Submit();
-        return this;
+        private static readonly By UsernameInput = By.Id("username");
+        private static readonly By PasswordInput = By.Id("password");
+        private static readonly By SubmitButton = By.CssSelector("button[type='submit']");
+        private static readonly By ErrorMessage = By.CssSelector(".floating-error-bubble");
+
+        public LoginPage(IWebDriver driver, WebDriverWait wait)
+        {
+            _driver = driver;
+            _wait = wait;
+        }
+
+        public void NavigateTo(string baseUrl)
+        {
+            _driver.Navigate().GoToUrl($"{baseUrl.TrimEnd('/')}/login");
+            WaitForVisible(UsernameInput);
+        }
+
+        public void Login(string username, string password)
+        {
+            var usernameField = WaitForVisible(UsernameInput);
+            usernameField.Clear();
+            usernameField.SendKeys(username);
+
+            var passwordField = WaitForVisible(PasswordInput);
+            passwordField.Clear();
+            passwordField.SendKeys(password);
+
+            WaitForVisible(SubmitButton).Click();
+        }
+
+        public string GetErrorMessage()
+        {
+            return WaitForVisible(ErrorMessage).Text;
+        }
+
+        private IWebElement WaitForVisible(By locator)
+        {
+            return _wait.Until(driver =>
+            {
+                var elements = driver.FindElements(locator);
+                return elements.FirstOrDefault(element => element.Displayed);
+            })!;
+        }
     }
 }

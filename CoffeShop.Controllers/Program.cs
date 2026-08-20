@@ -12,8 +12,14 @@ using CoffeShop.Controllers.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//Db connection-
-var conn_string = "Server=localhost,1435;Database=coffeshopv2;User Id=sa;Password=Deniro_007;TrustServerCertificate=true"; //Change it in each laptop
+//Db connection
+//var conn_string = "Server=localhost,1435;Database=coffeshopv2;User Id=sa;Password=Deniro_007;TrustServerCertificate=true"; //Change it in each laptop
+var conn_string = builder.Configuration.GetConnectionString("CoffeShop") ??
+"Server=localhost,1435;Database=coffeshopv2;User Id=sa;Password=Deniro_007;TrustServerCertificate=false";
+// var conn_string =
+//     builder.Configuration.GetConnectionString("CoffeShop")
+//     ?? throw new InvalidOperationException(
+//         "Connection string 'CoffeShop' not found.");
 
 //Logger config
 Log.Logger = new LoggerConfiguration()
@@ -25,13 +31,31 @@ builder.Host.UseSerilog();
 
 //CORS
 const string SpaCorsPolicy = "spa";
-
+//Legacy
 //Cors Policy
-builder.Services.AddCors(o => o.AddPolicy(SpaCorsPolicy, p => p
-    .WithOrigins("http://localhost:5173")
+// builder.Services.AddCors(o => o.AddPolicy(SpaCorsPolicy, p => p
+//     .WithOrigins("http://localhost:5173")
+//     .AllowAnyHeader()
+//     .AllowAnyMethod()
+//     ));
+
+
+// Lets change our CORS Block - we will still have our dev origins from the above code
+// but when the app is DEPLOYED - we want cors come in from env/config
+
+var extraOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>() ?? Array.Empty<string>();
+
+var spaOrigins = new[] { "http://localhost:5173" }
+    .Concat(extraOrigins)
+    .ToArray();
+
+    builder.Services.AddCors(o => o.AddPolicy(SpaCorsPolicy, p => p
+    .WithOrigins(spaOrigins)
     .AllowAnyHeader()
-    .AllowAnyMethod()
-    ));
+    .AllowAnyMethod()    
+));
 
 
 //Validation JWT 
@@ -58,6 +82,7 @@ builder.Services.AddScoped<IUserService, UserServices>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+builder.Services.AddScoped<IReportsService, ReportsService>();
 
 builder.Services.AddDbContext<CoffeShopDbContext>(o => o.UseSqlServer(conn_string));
 
