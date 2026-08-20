@@ -55,4 +55,26 @@ public class SmokeTests : IDisposable
         loginPage.Url.Should().Contain("login");
         loginPage.ErrorMessageText.Should().Be("User or password are not valid.");
     }
+
+    // TCQ-05: Consumer flow parity - Selenium version of browse, add item, and checkout.
+    [Fact]
+    public void ConsumerFlow_BrowseMenuAddItemCheckout_VerifiesSuccess()
+    {
+        // Arrange
+        var menuPage = new MenuPage(_driver);
+
+        // Act
+        menuPage.OpenWithMockedConsumerFlow();
+        menuPage.AddAmericanToCart();
+        var cartText = menuPage.WaitForCartToContain("American");
+        menuPage.Checkout();
+        var successMessage = menuPage.WaitForSuccessMessage();
+
+        // Assert
+        menuPage.Url.Should().Contain("/menu");
+        cartText.Should().Contain("American");
+        cartText.Should().Contain("$50");
+        successMessage.Should().Contain("Order #123 created");
+        successMessage.Should().Contain("Total: $50.00");
+    }
 }

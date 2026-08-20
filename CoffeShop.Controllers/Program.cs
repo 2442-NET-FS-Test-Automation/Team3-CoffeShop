@@ -139,7 +139,7 @@ app.UseHttpsRedirection();
 
 app.UseCors(SpaCorsPolicy);
 
-app.UseAuthentication(); 
+app.UseAuthentication();
 
 app.UseAuthorization();
 

@@ -6,12 +6,12 @@ using CoffeShop.Controllers.Services;
 using CoffeShop.Controllers.DTOs;
 using Microsoft.Extensions.Caching.Memory;
 using Moq;
-using Microsoft.EntityFrameworkCore.Query;
 
 namespace UnitTest.Tests;
 
 public class OrderServiceTest
 {
+    // TCQ-01: Equivalence partitioning - calculates the cart total for valid quantities.
     [Fact]
     public async Task CreateOrderAsync_WhenOrderHasValidQuantities_CalculatesTotal()
     {
@@ -75,6 +75,58 @@ public class OrderServiceTest
         repository.Verify(r => r.GetInventoryItemsByProductIds(It.IsAny<IReadOnlyList<int>>()), Times.Once);
         repository.Verify(r => r.AddOrder(It.IsAny<Order>()), Times.Once);
     }
+
+    // TCQ-08: Maps the optional user name to the order response's CashierName field.
+    [Fact]
+    public async Task CreateOrderAsync_WhenUserHasAName_MapsNameToCashierName()
+    {
+        // Arrange
+        var dto = new CreateOrderDto(new List<CreateOrderLineDto>
+        {
+            new CreateOrderLineDto(1, 1)
+        });
+        var user = new User
+        {
+            Id = 7,
+            Name = "Sofia Rivera",
+            Username = "sofia",
+            Email = "sofia@example.com"
+        };
+        var repository = new Mock<IOrderRepository>();
+        var cache = new MemoryCache(new MemoryCacheOptions());
+        var service = new OrderService(repository.Object, cache);
+        Order? savedOrder = null;
+
+        repository.Setup(r => r.GetUserByUsername("sofia")).ReturnsAsync(user);
+        repository.Setup(r => r.GetInventoryItemsByProductIds(It.IsAny<IReadOnlyList<int>>()))
+            .ReturnsAsync(new List<InventoryItem>
+            {
+                new()
+                {
+                    ProductId = 1,
+                    Stock = 1,
+                    product = new Product
+                    {
+                        Id = 1,
+                        Sku = "HOT-AME-01",
+                        Name = "American",
+                        Price = 50
+                    }
+                }
+            });
+        repository.Setup(r => r.AddOrder(It.IsAny<Order>()))
+            .Callback<Order>(order => savedOrder = order)
+            .ReturnsAsync((Order order) => order);
+
+        // Act
+        var result = await service.CreateOrderAsync(dto, "sofia");
+
+        // Assert
+        result.CashierName.Should().Be("Sofia Rivera");
+        savedOrder.Should().NotBeNull();
+        savedOrder!.UserId.Should().Be(7);
+    }
+
     [Fact]
     public async Task CreateOrderAsync_WhenOrderHasNoLines_ThrowsArgumentException()
     {
@@ -94,6 +146,7 @@ public class OrderServiceTest
         repository.Verify(r => r.AddOrder(It.IsAny<Order>()), Times.Never);
     }
 
+    // TCQ-02: Boundary value analysis - rejects an order line with quantity exactly zero.
     [Fact]
     public async Task CreateOrderAsync_WhenOrderLineQuantityIsZero_ThrowsArgumentException()
     {

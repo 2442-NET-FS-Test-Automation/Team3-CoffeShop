@@ -17,6 +17,7 @@ public class OrdersApiTest
         _client = factory.CreateClient();
     }
 
+    // TCQ-03: Validation rule proof - a negative quantity returns HTTP 400 Bad Request.
     [Fact]
     public async Task PostOrders_WhenOrderLineQuantityIsNegative_ReturnsBadRequest()
     {

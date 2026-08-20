@@ -70,6 +70,8 @@ public class InventoryApiTests
     {
         _client = factory.CreateClient();
     }
+    // TCQ-07: Menu display integration - the current menu endpoint returns a valid product list.
+    // The application exposes the menu at /api/inventory.
     [Fact]
     public async Task GetInventory_ReturnsSuccessStatusCode()
     {
