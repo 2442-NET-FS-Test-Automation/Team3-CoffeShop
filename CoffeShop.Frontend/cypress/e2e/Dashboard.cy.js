@@ -27,7 +27,7 @@ describe ('US 4.1 - Dashboard (E2E)', () => {
         cy.visit("/login");
 
         cy.get('input[name="username"]').type('Admin');
-        cy.get('input[name="password').type('Diego2003!');
+        cy.get('input[name="password').type('Admin123!');
         cy.get('button[type="submit"]').click();
 
         cy.url().should('include', '/menu');
@@ -37,7 +37,7 @@ describe ('US 4.1 - Dashboard (E2E)', () => {
 
         cy.wait('@getDashboardStats');
 
-        cy.contains('$4,850').should('be.visible');
+        cy.contains('$4850').should('be.visible');
         cy.contains('150').should('be.visible');
         cy.contains('$32.33').should('be.visible');
 
