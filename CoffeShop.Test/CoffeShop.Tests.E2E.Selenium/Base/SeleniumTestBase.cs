@@ -6,10 +6,7 @@ using OpenQA.Selenium.Support.UI;
 
 namespace CoffeShop.Test.E2E.Base
 {
-    /// <summary>
-    /// Clase base para todos los tests E2E. Encapsula la inicialización y el cierre
-    /// de ChromeDriver, además de un WebDriverWait reutilizable con espera explícita.
-    /// </summary>
+    /// <summary>Shared ChromeDriver lifecycle and explicit wait setup for E2E tests.</summary>
     public abstract class SeleniumTestBase
     {
         protected IWebDriver Driver = null!;
@@ -26,7 +23,10 @@ namespace CoffeShop.Test.E2E.Base
             // Descomentar para ejecutar en modo headless (por ejemplo, en un pipeline de CI):
             // options.AddArgument("--headless=new");
 
-            Driver = new ChromeDriver(options);
+            var driverService = ChromeDriverService.CreateDefaultService(AppContext.BaseDirectory);
+            driverService.HideCommandPromptWindow = true;
+
+            Driver = new ChromeDriver(driverService, options);
             Wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(Config.TestSettings.DefaultTimeoutSeconds));
         }
 

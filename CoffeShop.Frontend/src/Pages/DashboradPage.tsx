@@ -152,7 +152,7 @@ return (
                 formatter={(value: any) => {
 
                     const numericValue = typeof value === 'number' ? value : Number(value) || 0;
-                    return [`$${value.toFixed(2)}`, "Revenue"];
+                    return [`$${numericValue.toFixed(2)}`, "Revenue"];
                 }}
             />
             <Area 

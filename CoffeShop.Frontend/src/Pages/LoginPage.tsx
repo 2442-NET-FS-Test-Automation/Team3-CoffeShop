@@ -3,7 +3,7 @@ import logo from '../assets/CoffeShopLogo.png';
 import { type SyntheticEvent, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/useAuth";
-
+//Test
 const LoginPage = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");

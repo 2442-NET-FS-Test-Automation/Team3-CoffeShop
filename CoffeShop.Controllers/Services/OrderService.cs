@@ -29,6 +29,11 @@ public class OrderService : IOrderService
         {
             throw new ArgumentException("The order must contain at least one product.");
         }
+
+        if (dto.Lines.Any(line => line.Quantity <= 0))
+        {
+            throw new ArgumentException("Product quantities must be greater than 0.");
+        }
         
         var user = await _repo.GetUserByUsername(username);
         // Check if the user is valid

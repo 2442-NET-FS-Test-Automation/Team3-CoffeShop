@@ -5,23 +5,17 @@ namespace CoffeShop.Test.E2E.Pages
 {
     /// <summary>
     /// Page Object de la pantalla de autenticación.
-    ///
-    /// NOTA DE LOCATORS: no fue posible inspeccionar el DOM real de
-    /// CoffeShop.Frontend (GitHub bloqueó el acceso a los archivos del repo
-    /// durante la generación de este proyecto). Los selectores usan la
-    /// convención "data-testid", que es una práctica recomendada para pruebas
-    /// automatizadas. Reemplázalos por los atributos/IDs reales del proyecto,
-    /// o agrégalos al frontend si aún no existen.
+    /// Los selectores reflejan los IDs y clases publicados por el frontend.
     /// </summary>
     public class LoginPage
     {
         private readonly IWebDriver _driver;
         private readonly WebDriverWait _wait;
 
-        private By EmailInput => By.CssSelector("[data-testid='login-email']");
-        private By PasswordInput => By.CssSelector("[data-testid='login-password']");
-        private By SubmitButton => By.CssSelector("[data-testid='login-submit']");
-        private By ErrorMessage => By.CssSelector("[data-testid='login-error']");
+        private static readonly By UsernameInput = By.Id("username");
+        private static readonly By PasswordInput = By.Id("password");
+        private static readonly By SubmitButton = By.CssSelector("button[type='submit']");
+        private static readonly By ErrorMessage = By.CssSelector(".floating-error-bubble");
 
         public LoginPage(IWebDriver driver, WebDriverWait wait)
         {
@@ -32,25 +26,34 @@ namespace CoffeShop.Test.E2E.Pages
         public void NavigateTo(string baseUrl)
         {
             _driver.Navigate().GoToUrl($"{baseUrl.TrimEnd('/')}/login");
-            _wait.Until(d => d.FindElement(EmailInput).Displayed);
+            WaitForVisible(UsernameInput);
         }
 
-        public void Login(string email, string password)
+        public void Login(string username, string password)
         {
-            var emailField = _driver.FindElement(EmailInput);
-            emailField.Clear();
-            emailField.SendKeys(email);
+            var usernameField = WaitForVisible(UsernameInput);
+            usernameField.Clear();
+            usernameField.SendKeys(username);
 
-            var passwordField = _driver.FindElement(PasswordInput);
+            var passwordField = WaitForVisible(PasswordInput);
             passwordField.Clear();
             passwordField.SendKeys(password);
 
-            _driver.FindElement(SubmitButton).Click();
+            WaitForVisible(SubmitButton).Click();
         }
 
         public string GetErrorMessage()
         {
-            return _wait.Until(d => d.FindElement(ErrorMessage)).Text;
+            return WaitForVisible(ErrorMessage).Text;
+        }
+
+        private IWebElement WaitForVisible(By locator)
+        {
+            return _wait.Until(driver =>
+            {
+                var elements = driver.FindElements(locator);
+                return elements.FirstOrDefault(element => element.Displayed);
+            })!;
         }
     }
 }

@@ -160,6 +160,7 @@ const InventoryPage = () => {
 
         try {
             const sanitizedProduct = {
+                productId: editingProduct.productId,
                 sku: editingProduct.sku,
                 name: editingProduct.name,
                 price: editingProduct.price,

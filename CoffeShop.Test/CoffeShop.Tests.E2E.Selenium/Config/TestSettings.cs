@@ -12,7 +12,7 @@ namespace CoffeShop.Test.E2E.Config
     public static class TestSettings
     {
         public static string BaseUrl =>
-            Environment.GetEnvironmentVariable("E2E_BASE_URL") ?? "https://localhost:5173";
+            Environment.GetEnvironmentVariable("E2E_BASE_URL") ?? "http://localhost:5173";
 
         // Rol Admin (US6.1 - Manage Roles)
         public static string AdminUsername =>
