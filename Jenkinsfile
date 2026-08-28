@@ -15,7 +15,7 @@ pipeline {
         }
         stage('Test'){
             environment{
-                JWT__KEY = credentials('coffeshop-jwt-key')
+                JWT__KEY = credentials('coffeeshop-jwt-key')
             }
             steps {
                 dir(env.APP_DIR){
