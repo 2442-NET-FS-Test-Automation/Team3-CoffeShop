@@ -1,54 +1,32 @@
-// Library API pipeline (quickstart shape): test (the gate), build the image, push it to
-// the registry. Runs on the Windows agent. Read by Jenkins FROM this repo (Pipeline script
-// from SCM) - Jenkins has already checked the repo out to read this file, so there is no
-// Checkout stage.
 pipeline {
-    agent { label 'windows' }
-
+    agent { label 'windows'}
     environment {
-        APP_DIR  = '.'   // monorepo: the folder holding the .slnx
-        REGISTRY = 'coffeapi0818.azurecr.io'           // the ACR login server
-        IMAGE    = "${REGISTRY}/coffeshop-api"
-        Jwt__Key = credentials('jwt-key')                // the API's JWT key - a clean clone has no dev settings; masked in the log
+        APP_DIR = '.'
+        REGISTRY = 'coffeapi0818.azurecr.io'
+        IMAGE = "${REGISTRY}/coffeshop-api"
     }
-
     stages {
-        stage('Test') {
-            // The gate: no green tests, no image.
-            steps {
-                dir(env.APP_DIR) {
-                    bat 'docker start coffeeshop-sqlserver'
-                    powershell 'Remove-Item -Recurse -Force tests/*/TestResults -ErrorAction SilentlyContinue'
-                    bat 'dotnet test CoffeShop.slnx --logger trx'
+        stage('Build'){
+            steps{
+                dir(env.APP_DIR){
+                    bat 'dotnet build CoffeShop.slnx -c Release'
                 }
             }
         }
-
-        stage('Build image') {
+        stage('Test'){
             steps {
-                dir(env.APP_DIR) {
-                    bat 'docker build -t %IMAGE%:%BUILD_NUMBER% -t %IMAGE%:latest -f CoffeShop.Controllers/Dockerfile .'
-                }
-            }
-        }
-
-        stage('Push to ACR') {
-            steps {
-                // The credential never appears in the log: Jenkins injects it as env vars and masks them.
-                withCredentials([usernamePassword(credentialsId: 'admin_credentials', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASS')]) {
-                    bat 'echo %ACR_PASS%| docker login %REGISTRY% -u %ACR_USER% --password-stdin'
-                    bat 'docker push %IMAGE%:%BUILD_NUMBER%'
-                    bat 'docker push %IMAGE%:latest'
-                    bat 'docker logout %REGISTRY%'
+                dir(env.APP_DIR){
+                    bat 'docker start coffeshop-sqlserver'
+                    powershell 'Remove-Item -Recurse -Force CoffeShop.Test/*/TestResults -ErrorAction SilentlyContinue'
+                    bat 'dotnet test CoffeShop.slnx -c Release --no-build --logger trx'
                 }
             }
         }
     }
-
     post {
         always {
-            dir(env.APP_DIR) {
-                archiveArtifacts allowEmptyArchive: true, artifacts: 'tests/**/TestResults/*.trx'
+            dir(env.APP_DIR){
+                archiveArtifacts allowEmptyArchive: true, artifacts: 'CoffeShop.Test/**/TestResults/*.trx'
             }
         }
     }
