@@ -21,8 +21,8 @@ pipeline {
                 dir(env.APP_DIR){
                     bat 'docker start coffeeshop-sqlserver'
                     powershell 'Remove-Item -Recurse -Force CoffeShop.Test/*/TestResults -ErrorAction SilentlyContinue'
-                    bat 'dotnet test CoffeShop.Test/UnitTest.Tests/UnitTest.Tests.csproj -c Release --no-build --logger trx'
-                    bat 'dotnet test CoffeShop.Test/IntegrationTest.Test/IntegrationTest.Test.csproj -c Release --no-build --logger trx'
+                    bat 'dotnet test CoffeShop.Test/UnitTest.Tests/UnitTest.Tests.csproj -c Release --no-build --logger trx --logger junit'
+                    bat 'dotnet test CoffeShop.Test/IntegrationTest.Test/IntegrationTest.Test.csproj -c Release --no-build --logger trx --logger junit'
                 }
             }
         }
@@ -30,6 +30,7 @@ pipeline {
     post {
         always {
             dir(env.APP_DIR){
+                junit testResults: 'CoffeShop.Test/**/TestResults/*.xml'
                 archiveArtifacts allowEmptyArchive: true, artifacts: 'CoffeShop.Test/**/TestResults/*.trx'
             }
         }
