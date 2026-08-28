@@ -18,7 +18,8 @@ pipeline {
                 dir(env.APP_DIR){
                     bat 'docker start coffeeshop-sqlserver'
                     powershell 'Remove-Item -Recurse -Force CoffeShop.Test/*/TestResults -ErrorAction SilentlyContinue'
-                    bat 'dotnet test CoffeShop.slnx -c Release --no-build --logger trx'
+                    bat 'dotnet test CoffeShop.Test/UnitTest.Tests/UnitTest.Tests.csproj -c Release --no-build --logger trx'
+                    bat 'dotnet test CoffeShop.Test/IntegrationTest.Test/IntegrationTest.Test.csproj -c Release --no-build --logger trx'
                 }
             }
         }
