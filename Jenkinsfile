@@ -14,6 +14,9 @@ pipeline {
             }
         }
         stage('Test'){
+            environment{
+                JWT__KEY = credentials('coffeeshop-jwt-key')
+            }
             steps {
                 dir(env.APP_DIR){
                     bat 'docker start coffeeshop-sqlserver'
