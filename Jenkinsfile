@@ -16,6 +16,8 @@ pipeline {
         stage('Test'){
             steps {
                 dir(env.APP_DIR){
+                    bat 'docker context show'
+                    bat 'docker ps -a'
                     bat 'docker start coffeshop-sqlserver'
                     powershell 'Remove-Item -Recurse -Force CoffeShop.Test/*/TestResults -ErrorAction SilentlyContinue'
                     bat 'dotnet test CoffeShop.slnx -c Release --no-build --logger trx'
