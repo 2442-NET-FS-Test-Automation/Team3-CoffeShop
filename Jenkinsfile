@@ -2,7 +2,7 @@ pipeline {
     agent { label 'windows'}
     environment {
         APP_DIR = '.'
-        REGISTRY = 'coffeapi0818.azurecr.io'
+        REGISTRY = 'coffeshopignacio0828.azurecr.io'
         IMAGE = "${REGISTRY}/coffeshop-api"
     }
     stages {
@@ -29,7 +29,21 @@ pipeline {
         stage('Docker Build'){
             steps{
                 dir(env.APP_DIR){
-                    bat 'docker build -t coffeshop-api:%BUILD_NUMBER% -f CoffeShop.Controllers/Dockerfile .'
+                    bat 'docker build -t %IMAGE%:%BUILD_NUMBER% -f CoffeShop.Controllers/Dockerfile .'
+                }
+            }
+        }
+        stage('Push to ACR') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'acr-coffeeshop',
+                    usernameVariable: 'ACR_USERNAME',
+                    passwordVariable: 'ACR_PASSWORD'
+                )]) {
+                    powershell '$env:ACR_PASSWORD | docker login $env:REGISTRY --username $env:ACR_USERNAME --password-stdin'
+                    bat 'docker push %IMAGE%:%BUILD_NUMBER%'
+                    bat 'docker tag %IMAGE%:%BUILD_NUMBER% %IMAGE%:latest'
+                    bat 'docker push %IMAGE%:latest'
                 }
             }
         }
