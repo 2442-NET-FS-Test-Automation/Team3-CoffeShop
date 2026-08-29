@@ -36,7 +36,7 @@ pipeline {
         stage('Push to ACR') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'arc-coffeeshop',
+                    credentialsId: 'acr-coffeeshop',
                     usernameVariable: 'ACR_USERNAME',
                     passwordVariable: 'ACR_PASSWORD'
                 )]) {
