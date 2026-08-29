@@ -40,7 +40,7 @@ pipeline {
                     usernameVariable: 'ACR_USERNAME',
                     passwordVariable: 'ACR_PASSWORD'
                 )]) {
-                    powershell '$env:ACR_PASSWORD | docker login $env:REGISTRY --username $env:ACR_USERNAME --password-stdin'
+                    bat 'echo %ACR_PASSWORD%| docker login %REGISTRY% -u %ACR_USERNAME% --password-stdin'
                     bat 'docker push %IMAGE%:%BUILD_NUMBER%'
                     bat 'docker tag %IMAGE%:%BUILD_NUMBER% %IMAGE%:latest'
                     bat 'docker push %IMAGE%:latest'
