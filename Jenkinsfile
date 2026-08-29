@@ -26,6 +26,13 @@ pipeline {
                 }
             }
         }
+        stage('Docker Build'){
+            steps{
+                dir(env.APP_DIR){
+                    bat 'docker build -t coffeshop-api:%BUILD_NUMBER% -f CoffeShop.Controllers/Dockerfile .'
+                }
+            }
+        }
     }
     post {
         always {
