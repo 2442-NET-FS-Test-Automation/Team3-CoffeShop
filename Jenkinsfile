@@ -26,6 +26,16 @@ pipeline {
                 }
             }
         }
+        stage('Database Migration'){
+            environment{
+                ConnectionStrings__CoffeShop = credentials('azure-sql-connection')
+            }
+            steps {
+                dir(env.APP_DIR){
+                    bat 'dotnet ef database update --project CoffeShop.Data/CoffeShop.Data.csproj --startup-project CoffeShop.Controllers/CoffeShop.Controllers.csproj'
+                }
+            }
+        }
         stage('Docker Build'){
             steps{
                 dir(env.APP_DIR){
