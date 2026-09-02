@@ -84,7 +84,9 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IReportsService, ReportsService>();
 
-builder.Services.AddDbContext<CoffeShopDbContext>(o => o.UseSqlServer(conn_string));
+builder.Services.AddDbContext<CoffeShopDbContext>(o => o.UseSqlServer(
+    conn_string,
+    sqlOptions => sqlOptions.EnableRetryOnFailure()));
 
 builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
