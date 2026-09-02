@@ -73,7 +73,9 @@ pipeline {
                 withCredentials([string(credentialsId: 'web-sas', variable: 'SAS')]) {
                     dir(env.SPA_DIR) {
                         powershell '''
-                            $dest = 'https://coffeshopwebignacio0828.blob.core.windows.net/$web' + $env:SAS
+                            $sas = $env:SAS.Trim()
+                            if (-not $sas.StartsWith('?')) { $sas = '?' + $sas }
+                            $dest = 'https://coffeshopwebignacio0828.blob.core.windows.net/$web' + $sas
                             azcopy sync dist $dest --recursive --delete-destination=true
                         '''
                     }
