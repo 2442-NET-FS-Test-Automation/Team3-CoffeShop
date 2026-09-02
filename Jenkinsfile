@@ -4,6 +4,9 @@ pipeline {
         APP_DIR = '.'
         REGISTRY = 'coffeshopignacio0828.azurecr.io'
         IMAGE = "${REGISTRY}/coffeshop-api"
+        SPA_DIR = 'CoffeShop.Frontend'
+        API_URL = 'https://rg-coffeshop-api-ignacio0828-eyh3drgfdcbmc8gu.centralus-01.azurewebsites.net'
+        SITE_URL = 'https://coffeshopwebignacio0828.z19.web.core.windows.net'
     }
     stages {
         stage('Build'){
@@ -54,6 +57,26 @@ pipeline {
                     bat 'docker push %IMAGE%:%BUILD_NUMBER%'
                     bat 'docker tag %IMAGE%:%BUILD_NUMBER% %IMAGE%:latest'
                     bat 'docker push %IMAGE%:latest'
+                }
+            }
+        }
+        stage('Build SPA') {
+            steps {
+                dir(env.SPA_DIR) {
+                    bat 'npm ci'
+                    bat 'set VITE_API_BASE_URL=%API_URL%&& npm run build'
+                }
+            }
+        }
+        stage('Publish SPA') {
+            steps {
+                withCredentials([string(credentialsId: 'web-sas', variable: 'SAS')]) {
+                    dir(env.SPA_DIR) {
+                        powershell '''
+                            $dest = 'https://coffeshopwebignacio0828.blob.core.windows.net/$web' + $env:SAS
+                            azcopy sync dist $dest --recursive --delete-destination=true
+                        '''
+                    }
                 }
             }
         }
